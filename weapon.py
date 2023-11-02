@@ -99,5 +99,5 @@ class Weapon(pygame.sprite.Sprite):
         projectile = Projectile(self.program,
                                 self.rect.centerx + direction_x * 64,
                                 self.rect.centery + direction_y * 64,
-                                self.angle, self.speed)
+                                self.angle, self.speed, self)
         self.projectiles.add(projectile)

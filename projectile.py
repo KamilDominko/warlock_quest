@@ -3,12 +3,12 @@ import math
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, program, centerx, centery, anglee, speed):
+    def __init__(self, program, centerx, centery, anglee, speed, weapon):
         super().__init__()
         self.program = program
         self._image = pygame.image.load(
             "res/graphic/projectiles/projectile.png")
-        self._image = pygame.transform.scale(self._image, (32,32))
+        self._image = pygame.transform.scale(self._image, (32, 32))
         self.image = self._image
         self.x = centerx
         self.y = centery
@@ -18,10 +18,12 @@ class Projectile(pygame.sprite.Sprite):
         x = mouse_x + program.camera.offset[0]
         y = mouse_y + program.camera.offset[1]
         self._rect = pygame.Rect((x, y), (1, 1))
-        angle = math.atan2(self._rect.y - self.y, self._rect.x - self.x)
+        angle = math.atan2(self._rect.y - weapon.rect.centery,
+                           self._rect.x - weapon.rect.centerx)
         self.image = pygame.transform.rotate(self._image, anglee - 90)
         # self.rect = self.image.get_rect(center=(self.x, self.y))
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect = self.image.get_rect(center=(weapon.rect.centerx,
+                                                weapon.rect.centery))
         self.dx = math.cos(angle) * self.speed
         self.dy = math.sin(angle) * self.speed
         self.direction_x = mouse_x - self.x
