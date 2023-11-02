@@ -15,4 +15,4 @@ class Settings:
         self.field_size = 64
 
     def get_res(self):
-        return (self.screen_width, self.screen_height)
+        return self.screen_width, self.screen_height

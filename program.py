@@ -12,9 +12,9 @@ class Program:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.get_res()))
         pygame.display.set_caption(self.settings.title)
+        self.map = Map(self)
         self.player = Player(self)
         self.camera = Camera(self)
-        self.map = Map(self)
         self.clock = pygame.time.Clock()
 
     def _check_events(self):

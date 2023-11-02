@@ -48,56 +48,23 @@ class Weapon(pygame.sprite.Sprite):
     def update(self, player_center):
         if self.projectiles:
             self.projectiles.update()
-        # if self._projectiles:
-        #     for projectile in self._projectiles:
-        #         projectile.update()
         self._rotate_image()
         x = player_center[0]
         y = player_center[1]
         x = self.player.rect.centerx
         y = self.player.rect.centery
         self.rect = self.image.get_rect(center=(x, y))
-        # print(self.rect)
 
     def display(self):
         for projectile in self.projectiles:
             projectile.display()
         rect = self.program.camera.update_rect(self.rect)
         self.program.screen.blit(self.image, rect)
-        # self.projectiles.draw(self.program.screen)
         DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_line()
 
-    # def shoot(self):
-    #     cx = self.rect.center[0]
-    #     cy = self.rect.center[1]
-    #     mouse_x, mouse_y = pygame.mouse.get_pos()
-    #     xdyst = mouse_x - cx
-    #     ydyst = mouse_y - cy
-    #     cdyst = math.sqrt(xdyst ** 2 + ydyst ** 2)
-    #     projectile = Projectile(self.program, self.rect.center[0],
-    #                             self.rect.center[1],
-    #                             self.angle, self.speed)
-    #     self.projectiles.add(projectile)
-    #     self._projectiles.append(projectile)
-
     def shoot(self):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        # Przelicz pozycję myszy na przestrzeń gry
-        adjusted_mouse_x = mouse_x + self.program.camera.offset[0]
-        adjusted_mouse_y = mouse_y + self.program.camera.offset[1]
-        # Oblicz kierunek od broni do pozycji myszy
-        direction_x = adjusted_mouse_x - self.rect.centerx
-        direction_y = adjusted_mouse_y - self.rect.centery
-        distance = math.sqrt(direction_x ** 2 + direction_y ** 2)
-        if distance != 0:
-            direction_x /= distance
-            direction_y /= distance
-        # Utwórz pocisk na czubku broni, przesuwając go w kierunku kursora
-        projectile = Projectile(self.program,
-                                self.rect.centerx + direction_x * 64,
-                                self.rect.centery + direction_y * 64,
-                                self.angle, self.speed, self)
+        projectile = Projectile(self)
         self.projectiles.add(projectile)

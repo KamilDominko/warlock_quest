@@ -3,43 +3,46 @@ import math
 
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, program, centerx, centery, anglee, speed, weapon):
-        super().__init__()
-        self.program = program
-        self._image = pygame.image.load(
-            "res/graphic/projectiles/projectile.png")
-        self._image = pygame.transform.scale(self._image, (32, 32))
-        self.image = self._image
-        self.x = centerx
-        self.y = centery
+    image = pygame.image.load(
+        "res/graphic/projectiles/projectile.png")
+    image = pygame.transform.scale(image, (32, 32))  # SKALUJE
 
-        self.speed = speed
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        x = mouse_x + program.camera.offset[0]
-        y = mouse_y + program.camera.offset[1]
-        self._rect = pygame.Rect((x, y), (1, 1))
-        angle = math.atan2(self._rect.y - weapon.rect.centery,
-                           self._rect.x - weapon.rect.centerx)
-        self.image = pygame.transform.rotate(self._image, anglee - 90)
-        # self.rect = self.image.get_rect(center=(self.x, self.y))
+    def __init__(self, weapon):
+        super().__init__()
+        self.program = weapon.program
+        self.image = Projectile.image.convert_alpha()
+        self.image = pygame.transform.rotate(Projectile.image.convert_alpha(),
+                                             weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        self.dx = math.cos(angle) * self.speed
-        self.dy = math.sin(angle) * self.speed
-        self.direction_x = mouse_x - self.x
-        self.direction_y = mouse_y - self.y
-        distance = math.sqrt(self.direction_x ** 2 + self.direction_y ** 2)
+        self.speed = weapon.speed
+
+        self.x, self.y = self._adjusted_x_y(
+            self.program.camera.update_mouse()[0],
+            self.program.camera.update_mouse()[1], weapon)
+
+        self._rect = pygame.Rect((self.program.camera.update_mouse()), (1, 1))
+        _angle = math.atan2(self._rect.y - weapon.rect.centery,
+                            self._rect.x - weapon.rect.centerx)
+        self.dx = math.cos(_angle) * self.speed
+        self.dy = math.sin(_angle) * self.speed
+
+    def _adjusted_x_y(self, adjusted_mouse_x, adjusted_mouse_y, weapon):
+        direction_x = adjusted_mouse_x - weapon.rect.centerx
+        direction_y = adjusted_mouse_y - weapon.rect.centery
+        distance = math.sqrt(direction_x ** 2 + direction_y ** 2)
         if distance != 0:
-            self.direction_x /= distance
-            self.direction_y /= distance
+            direction_x /= distance
+            direction_y /= distance
+        x = weapon.rect.centerx + direction_x * 64  # offset spawnopintu
+        y = weapon.rect.centery + direction_y * 64
+        return x, y
 
     def update(self):
-        self.x = self.x + self.dx
-        self.y = self.y + self.dy
-
+        self.x += self.dx
+        self.y += self.dy
         self.rect.centerx = int(self.x)
         self.rect.centery = int(self.y)
-
         self._check_borders()
 
     def _check_borders(self):
