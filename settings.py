@@ -4,13 +4,13 @@ class Settings:
     def __init__(self):
         self.screen_width = 1920
         self.screen_height = 1080
-        self.title = "Makaron"
+        self.title = "Warlock Quest"
         self.fps = 60
 
         self.player_speed = 4
         self.player_sprint = 8
 
-        self.projectile_speed = 2
+        self.projectile_speed = 16
 
         self.field_size = 64
 

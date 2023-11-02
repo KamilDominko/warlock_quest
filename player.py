@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, program):
         super().__init__()
         self.program = program
-        self.image = pygame.surface.Surface((64,128))
+        self.image = pygame.surface.Surface((64, 128))
         self.rect = self.image.get_rect(center=program.screen.get_rect().center)
         self.feet = self.rect.midbottom
         self.speed = program.settings.player_speed
@@ -41,16 +41,16 @@ class Player(pygame.sprite.Sprite):
         for i in range(files_count):
             img = pygame.image.load(
                 f"{folder_path}/{img_name}{i + 1}{file_extension}").convert_alpha()
-            img = pygame.transform.scale(img, (64,128))
+            img = pygame.transform.scale(img, (64, 128))
             animation.append(img)
         return animation
 
     def _draw_rect(self):
-        # _offset = self.rect.topleft - self.program.camera.offset
-        # rect = pygame.Rect(_offset[0], _offset[1], self.rect.w, self.rect.h)
         rect = self.program.camera.update_rect(self.rect)
         pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
-        pygame.draw.circle(self.program.screen, (0, 255, 0), self.feet, 3)
+
+    def _draw_feet(self):
+        pygame.draw.circle(self.program.screen, (0, 0, 255), self.feet, 3)
 
     def move(self, event):
         """Funkcja sprawdza, czy gracz ma iść, w którą stronę."""
@@ -83,7 +83,7 @@ class Player(pygame.sprite.Sprite):
     def _animation_state(self):
         if not self._state_up and not self._state_down and not \
                 self._state_left and not self._state_right:
-            self.animation_index += 0.1
+            self.animation_index += 0.05
             if self.animation_index >= len(self.animation_idle):
                 self.animation_index = 0
             self.image = self.animation_idle[int(self.animation_index)]
@@ -94,7 +94,10 @@ class Player(pygame.sprite.Sprite):
 
     def _check_animation_state(self, state, animation):
         if state:
-            self.animation_index += 0.1
+            if self._state_sprint:
+                self.animation_index += 0.1 * 3
+            elif not self._state_sprint:
+                self.animation_index += 0.1
             if self.animation_index >= len(animation):
                 self.animation_index = 0
             self.image = animation[int(self.animation_index)]
@@ -146,14 +149,23 @@ class Player(pygame.sprite.Sprite):
     def display(self):
         # self.program.screen.blit(self.image, self.rect)
         if not self._state_up:
+            # Jeżeli gracz skierowany jest w dół, najpierw wyświetl gracza,
+            # potem jego broń
             self.program.camera.camera_draw(self.image, self.rect.topleft)
             self.weapon.display()
         elif self._state_up:
+            # Jeżeli gracz jest skierowany w górę...
             if self._state_left or self._state_right:
+                # ...ORAZ jest skierowany w lewo albo w prawo to najpierw
+                # wyświetl gracza, a potem jego broń.
                 self.program.camera.camera_draw(self.image, self.rect.topleft)
                 self.weapon.display()
             else:
+                # ...najpierw wyświetl broń, a następnie gracza.
                 self.weapon.display()
                 self.program.camera.camera_draw(self.image, self.rect.topleft)
-        self._draw_rect()
+        DEV = 0
+        if DEV:
+            self._draw_rect()
+            self._draw_feet()
         # print(self.rect.center)

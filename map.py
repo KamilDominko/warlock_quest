@@ -104,10 +104,10 @@ class Map:
         self.program = program
         self.grass_img = pygame.image.load(
             "res/graphic/ground/grass.png").convert()
-        # self.grass_img = pygame.transform.scale(self.grass_img, (128, 128))
+        self.grass_img = pygame.transform.scale(self.grass_img, (128, 128))
         self.stone_img = pygame.image.load(
             "res/graphic/ground/stone.png").convert()
-        # self.stone_img = pygame.transform.scale(self.stone_img, (128, 128))
+        self.stone_img = pygame.transform.scale(self.stone_img, (128, 128))
         self.sheet_img = pygame.image.load("hatka.png").convert_alpha()
         self.sheet_img = pygame.transform.scale(self.sheet_img, (64, 64))
 

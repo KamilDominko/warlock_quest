@@ -32,7 +32,7 @@ class Weapon(pygame.sprite.Sprite):
     def _rotate_image(self):
         rect = self.program.camera.update_rect(self.player.rect)
         self.angle = self._give_angle(rect.center)
-        img = pygame.transform.scale(self._image, (64, 128))  # SKALUJE
+        img = pygame.transform.scale(self._image, (32, 128))  # SKALUJE
         self.image = pygame.transform.rotate(img, self.angle - 90)
 
     def _give_angle(self, point):
@@ -60,18 +60,24 @@ class Weapon(pygame.sprite.Sprite):
         # print(self.rect)
 
     def display(self):
-        if self._projectiles:
-            for projectile in self._projectiles:
-                projectile.display(self.program.screen, self.program.camera)
-        # self.program.camera.camera_draw(self.image, self.rect.topleft)
+        for projectile in self.projectiles:
+            projectile.display()
         rect = self.program.camera.update_rect(self.rect)
         self.program.screen.blit(self.image, rect)
         # self.projectiles.draw(self.program.screen)
-        self._draw_rect()
-        self._draw_line()
+        DEV = 0
+        if DEV:
+            self._draw_rect()
+            self._draw_line()
 
     def shoot(self):
-        projectile = Projectile(self.program.camera, self.rect.center[0],
+        cx = self.rect.center[0]
+        cy = self.rect.center[1]
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        xdyst = mouse_x - cx
+        ydyst = mouse_y - cy
+        cdyst = math.sqrt(xdyst ** 2 + ydyst ** 2)
+        projectile = Projectile(self.program, self.rect.center[0],
                                 self.rect.center[1],
                                 self.angle, self.speed)
         self.projectiles.add(projectile)
