@@ -7,10 +7,10 @@ class Settings:
         self.title = "Warlock Quest"
         self.fps = 60
 
-        self.player_speed = 4
-        self.player_sprint = 8
+        self.player_speed = 3
+        self.player_sprint = 5
 
-        self.projectile_speed = 16
+        self.projectile_speed = 11
 
         self.field_size = 64
 
