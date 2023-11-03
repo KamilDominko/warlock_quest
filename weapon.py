@@ -10,9 +10,8 @@ class Weapon(pygame.sprite.Sprite):
         self.program = program
         self.player = player
         self._image = pygame.image.load(
-            "res/graphic/weapons/wand.png").convert_alpha()
+            "res/graphic/weapons/staff.png").convert_alpha()
         self.image = self._image
-        # self.image = pygame.transform.scale(self._image, (16, 64))
         self.rect = self.image.get_rect()
         self.speed = self.program.settings.projectile_speed
         self.projectiles = pygame.sprite.Group()
@@ -25,15 +24,13 @@ class Weapon(pygame.sprite.Sprite):
         pygame.draw.line(self.program.screen, (255, 0, 0), rect.center, end)
 
     def _draw_rect(self):
-        # rect = self.program.camera.update_rect(self.rect)
         rect = self.program.camera.update_rect(self.rect)
         pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
 
     def _rotate_image(self):
         rect = self.program.camera.update_rect(self.player.rect)
         self.angle = self._give_angle(rect.center)
-        img = pygame.transform.scale(self._image, (32, 128))  # SKALUJE
-        self.image = pygame.transform.rotate(img, self.angle - 90)
+        self.image = pygame.transform.rotate(self._image, self.angle - 90)
 
     def _give_angle(self, point):
         """Funkcja zwraca wartość kątu w stopniach mierzonego od punktu do

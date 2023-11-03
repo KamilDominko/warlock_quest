@@ -20,7 +20,6 @@ class Obstacle(pygame.sprite.Sprite):
         self.display(screen, camera)
 
     def display(self, screen, camera):
-        # screen.blit(self.image, self.rect)
         camera.camera_draw(self.image, self.rect.topleft)
 
         DEV = 0

@@ -12,7 +12,7 @@ class Settings:
 
         self.projectile_speed = 17
 
-        self.field_size = 64
+        self.field_size = 128
 
     def get_res(self):
         return self.screen_width, self.screen_height

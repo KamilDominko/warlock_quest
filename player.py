@@ -16,13 +16,15 @@ class Player(pygame.sprite.Sprite):
         self.sprint = program.settings.player_sprint
         self.weapon = Weapon(self, self.program)
         self.obstacles = program.map.obstacles
-        # Animacje.
         self._state_up = 0
         self._state_down = 0
         self._state_left = 0
         self._state_right = 0
         self._state_sprint = 0
         self.animation_index = 0
+        self._load_animations()
+
+    def _load_animations(self):
         self.animation_idle = self._load_images(
             "res/graphic/player/player_idle", "player_idle", ".png")
         self.animation_up = self._load_images(
@@ -47,164 +49,53 @@ class Player(pygame.sprite.Sprite):
             animation.append(img)
         return animation
 
-    def _hit_list(self):
-        hit_list = []
-        for field in self.obstacles:
-            if self.rect.colliderect(field.rect):
-                hit_list.append(field)
-        return hit_list
+    def _check_animation_state(self, state, animation):
+        if state:
+            if self._state_sprint:
+                self.animation_index += 0.1 * 3
+            elif not self._state_sprint:
+                self.animation_index += 0.1
+            if self.animation_index >= len(animation):
+                self.animation_index = 0
+            self.image = animation[int(self.animation_index)]
 
-    # def _check_obstacle_collision(self):
-    #     hit_list = self._hit_list()
-    #     print(hit_list)
-    #     for field in hit_list:
-    #         # W dół.
-    #         rect = (self.rect.x, self.rect.y + self.speed,
-    #                 self.rect.w, self.rect.h)
-    #         if field.rect.colliderect(rect):
-    #             self.rect.y -= self.speed
-    #         # W górę.
-    #         rect = (self.rect.x, self.rect.y - self.speed,
-    #                 self.rect.w, self.rect.h)
-    #         if field.rect.colliderect(rect):
-    #             self.rect.y += self.speed
-    #         # W Prawo.
-    #         rect = (self.rect.x + self.speed, self.rect.y,
-    #                 self.rect.w, self.rect.h)
-    #         if field.rect.colliderect(rect):
-    #             self.rect.x -= self.speed
-    #         # W lewo.
-    #         rect = (self.rect.x - self.speed, self.rect.y,
-    #                 self.rect.w, self.rect.h)
-    #         if field.rect.colliderect(rect):
-    #             self.rect.x += self.speed
+    def _animation_state(self):
+        if not self._state_up and not self._state_down and not \
+                self._state_left and not self._state_right:
+            self.animation_index += 0.05
+            if self.animation_index >= len(self.animation_idle):
+                self.animation_index = 0
+            self.image = self.animation_idle[int(self.animation_index)]
+        self._check_animation_state(self._state_up, self.animation_up)
+        self._check_animation_state(self._state_down, self.animation_down)
+        self._check_animation_state(self._state_left, self.animation_left)
+        self._check_animation_state(self._state_right, self.animation_right)
 
-    # def _move2(self):
-    #     _speed = self.speed
-    #     if self._state_up:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y - self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.y -= _speed
-    #     _speed = self.speed
-    #     if self._state_down:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y + self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.y += _speed
-    #     _speed = self.speed
-    #     if self._state_left:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x - self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.x -= _speed
-    #     _speed = self.speed
-    #     if self._state_right:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x + self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.x += _speed
+    def _move(self):
+        move_vectors = [pygame.math.Vector2(0, -self.speed),
+                        pygame.math.Vector2(0, self.speed),
+                        pygame.math.Vector2(-self.speed, 0),
+                        pygame.math.Vector2(self.speed, 0)]
+        for i in range(4):
+            if (i == 0 and self._state_up) or (i == 1 and self._state_down) or (
+                    i == 2 and self._state_left) or (
+                    i == 3 and self._state_right):
+                _speed = self.speed
+                _feet = self.feet + move_vectors[i]
+                for obstacle in self.obstacles:
+                    if obstacle.rect.collidepoint(_feet):
+                        _speed = 0
+                        break
+                if i == 0:
+                    self.rect.y -= _speed
+                elif i == 1:
+                    self.rect.y += _speed
+                elif i == 2:
+                    self.rect.x -= _speed
+                elif i == 3:
+                    self.rect.x += _speed
 
-    def _move2(self):
-        _speed = self.speed
-        if self._state_up:
-            for obstacle in self.obstacles:
-                feet = self.feet - pygame.math.Vector2(0, self.speed)
-                if obstacle.rect.collidepoint(feet):
-                    _speed = 0
-                    break
-            self.rect.y -= _speed
-        _speed = self.speed
-        if self._state_down:
-            for obstacle in self.obstacles:
-                feet = self.feet + pygame.math.Vector2(0, self.speed)
-                if obstacle.rect.collidepoint(feet):
-                    _speed = 0
-                    break
-            self.rect.y += _speed
-        _speed = self.speed
-        if self._state_left:
-            for obstacle in self.obstacles:
-                feet = self.feet - pygame.math.Vector2(self.speed, 0)
-                if obstacle.rect.collidepoint(feet):
-                    _speed = 0
-                    break
-            self.rect.x -= _speed
-        _speed = self.speed
-        if self._state_right:
-            for obstacle in self.obstacles:
-                feet = self.feet + pygame.math.Vector2(self.speed, 0)
-                if obstacle.rect.collidepoint(feet):
-                    _speed = 0
-                    break
-            self.rect.x += _speed
-
-    # def _move2(self):
-    #     if self._state_up:
-    #         self.rect.y -= self.speed
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y - self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 self.rect.y += self.speed
-    #                 break
-    #     if self._state_down:
-    #         self.rect.y += self.speed
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y + self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 self.rect.y -= self.speed
-    #                 break
-    #     if self._state_left:
-    #         self.rect.x -= self.speed
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x - self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 self.rect.x += self.speed
-    #                 break
-    #     if self._state_right:
-    #         self.rect.x += self.speed
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x + self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 self.rect.x -= self.speed
-    #                 break
-
-    # def _move2(self):
-    #     if self._state_up:
-    #         self.rect.y -= self.speed
-    #     if self._state_down:
-    #         self.rect.y += self.speed
-    #     if self._state_left:
-    #         self.rect.x -= self.speed
-    #     if self._state_right:
-    #         self.rect.x += self.speed
-    #     self._check_obstacle_collision()
-
-    def _draw_rect(self):
-        rect = self.program.camera.update_rect(self.rect)
-        pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
-
-    def _draw_feet(self):
-        feet = self.program.camera.update_point(self.feet)
-        pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
-
-    def move(self, event):
+    def input(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
@@ -234,97 +125,33 @@ class Player(pygame.sprite.Sprite):
                 self._state_sprint = 0
                 self.speed = self.walk
 
-    def _animation_state(self):
-        if not self._state_up and not self._state_down and not \
-                self._state_left and not self._state_right:
-            self.animation_index += 0.05
-            if self.animation_index >= len(self.animation_idle):
-                self.animation_index = 0
-            self.image = self.animation_idle[int(self.animation_index)]
-        self._check_animation_state(self._state_up, self.animation_up)
-        self._check_animation_state(self._state_down, self.animation_down)
-        self._check_animation_state(self._state_left, self.animation_left)
-        self._check_animation_state(self._state_right, self.animation_right)
-
-    # def _move2(self):
-    #     if self._state_up:
-    #         if self._state_sprint:
-    #             self.rect.y -= self.sprint
-    #         if not self._state_sprint:
-    #             self.rect.y -= self.speed
-    #     if self._state_down:
-    #         if self._state_sprint:
-    #             self.rect.y += self.sprint
-    #         if not self._state_sprint:
-    #             self.rect.y += self.speed
-    #     if self._state_left:
-    #         if self._state_sprint:
-    #             self.rect.x -= self.sprint
-    #         if not self._state_sprint:
-    #             self.rect.x -= self.speed
-    #     if self._state_right:
-    #         if self._state_sprint:
-    #             self.rect.x += self.sprint
-    #         if not self._state_sprint:
-    #             self.rect.x += self.speed
-    #     self._check_obstacle_collision()
-
-    def _check_animation_state(self, state, animation):
-        if state:
-            if self._state_sprint:
-                self.animation_index += 0.1 * 3
-            elif not self._state_sprint:
-                self.animation_index += 0.1
-            if self.animation_index >= len(animation):
-                self.animation_index = 0
-            self.image = animation[int(self.animation_index)]
-
-    def _move(self):
-        map = self.program.map.width
-        map = self.program.map.height
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] and self.rect.bottom > 0:  # GÓRA
-            self.rect.y -= self.speed
-        if keys[
-            pygame.K_s] and self.rect.bottom < self.program.map.height:  # DÓŁ
-            self.rect.y += self.speed
-        if keys[pygame.K_a] and self.rect.left > 0:  # LEWO
-            self.rect.x -= self.speed
-        if keys[
-            pygame.K_d] and self.rect.right < self.program.map.width:  # PRAWO
-            self.rect.x += self.speed
-
     def update(self):
-        # self._move()
+        self._move()
         self.feet = self.rect.midbottom
         self._animation_state()
-        self._move2()
         center = self.program.camera.update_rect(self.rect)
         self.weapon.update(center.center)
 
     def display(self):
-        # self.program.screen.blit(self.image, self.rect)
         if not self._state_up:
-            # Jeżeli gracz skierowany jest w dół, najpierw wyświetl gracza,
-            # potem jego broń
+            self.program.camera.camera_draw(self.image, self.rect.topleft)
+            self.weapon.display()
+        elif self._state_left or self._state_right:
             self.program.camera.camera_draw(self.image, self.rect.topleft)
             self.weapon.display()
         elif self._state_up:
-            # Jeżeli gracz jest skierowany w górę...
-            if self._state_left or self._state_right:
-                # ...ORAZ jest skierowany w lewo albo w prawo to najpierw
-                # wyświetl gracza, a potem jego broń.
-                self.program.camera.camera_draw(self.image, self.rect.topleft)
-                self.weapon.display()
-            else:
-                # ...najpierw wyświetl broń, a następnie gracza.
-                self.weapon.display()
-                self.program.camera.camera_draw(self.image, self.rect.topleft)
+            self.weapon.display()
+            self.program.camera.camera_draw(self.image, self.rect.topleft)
+
         DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_feet()
 
-            z = self.feet - pygame.math.Vector2(0, 1000)
-            # print(f"{self.feet}\n{z}")
-        # print(self.rect.center)
+    def _draw_rect(self):
+        rect = self.program.camera.update_rect(self.rect)
+        pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
+
+    def _draw_feet(self):
+        feet = self.program.camera.update_point(self.feet)
+        pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)

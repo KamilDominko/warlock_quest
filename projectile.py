@@ -5,7 +5,6 @@ import math
 class Projectile(pygame.sprite.Sprite):
     image = pygame.image.load(
         "res/graphic/projectiles/projectile.png")
-    # image = pygame.transform.scale(image, (32, 32))  # SKALUJE
 
     def __init__(self, weapon):
         super().__init__()
@@ -34,7 +33,7 @@ class Projectile(pygame.sprite.Sprite):
         if distance != 0:
             direction_x /= distance
             direction_y /= distance
-        x = weapon.rect.centerx + direction_x * 64  # offset spawnopintu
+        x = weapon.rect.centerx + direction_x * 64  # 64 to offset spawnopintu
         y = weapon.rect.centery + direction_y * 64
         return x, y
 

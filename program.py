@@ -26,7 +26,7 @@ class Program:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.isRunning = False
-            self.player.move(event)
+            self.player.input(event)
 
     def _update_entities(self):
         self.player.update()
@@ -34,7 +34,7 @@ class Program:
 
     def _update_screen(self):
         self.screen.fill((0, 0, 0))
-        self.map.display_map()
+        self.map.display()
         self.player.display()
         pygame.display.update()
 
