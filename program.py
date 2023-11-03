@@ -31,7 +31,7 @@ class Program:
         self.camera.update()
 
     def _update_screen(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((0, 0, 0))
         self.map.display_map()
         self.player.display()
         pygame.display.update()

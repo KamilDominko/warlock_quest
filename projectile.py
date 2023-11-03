@@ -5,7 +5,7 @@ import math
 class Projectile(pygame.sprite.Sprite):
     image = pygame.image.load(
         "res/graphic/projectiles/projectile.png")
-    image = pygame.transform.scale(image, (32, 32))  # SKALUJE
+    # image = pygame.transform.scale(image, (32, 32))  # SKALUJE
 
     def __init__(self, weapon):
         super().__init__()

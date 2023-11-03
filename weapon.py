@@ -12,7 +12,7 @@ class Weapon(pygame.sprite.Sprite):
         self._image = pygame.image.load(
             "res/graphic/weapons/wand.png").convert_alpha()
         self.image = self._image
-        self.image = pygame.transform.scale(self._image, (16, 64))
+        # self.image = pygame.transform.scale(self._image, (16, 64))
         self.rect = self.image.get_rect()
         self.speed = self.program.settings.projectile_speed
         self.projectiles = pygame.sprite.Group()
