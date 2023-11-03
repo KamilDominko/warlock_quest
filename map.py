@@ -161,7 +161,7 @@ class Map:
                 if field == "sdg":
                     self.program.camera.camera_draw(self.stone_ground_img,
                                                     (x, y))
-                DEV = 1
+                DEV = 0
                 if DEV:
                     self._draw_grid(x, y)
         self.obstacles.update(self.program.screen, self.program.camera)
