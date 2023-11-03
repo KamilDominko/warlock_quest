@@ -2,12 +2,12 @@ import pygame
 
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image):
         super().__init__()
         self.x = x
         self.y = y
-        self._image = pygame.image.load("hatka.png").convert_alpha()
-        self.image = pygame.transform.scale(self._image, (128, 128))
+        self._image = image
+        self.image = self._image
         self.rect = self.image.get_rect(topleft=(x * 128, y * 128))
 
 

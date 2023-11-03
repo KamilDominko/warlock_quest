@@ -6,23 +6,109 @@ stone_map10x10 = [
     ["swe", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sww"],
     ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
     ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
-    ["swe", "sdg", "sdg", "sdg", 11, "sdg", 11, "sdg", "sdg", "sww"],
     ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
-    ["swe", 11, "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
     ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
     ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
     ["xxx", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "xxx"]]
 
+stone_map40x40 = [
+    ["swe", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws",
+     "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws",
+     "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws",
+     "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sws", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "swi", "swi", "swi", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sws", "sws", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["swe", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg",
+     "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sdg", "sww"],
+    ["xxx", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn",
+     "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn",
+     "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn",
+     "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "swn", "xxx"]]
+
 map10x10 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
 map20x20 = [[11, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5],
             [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 5],
@@ -139,9 +225,10 @@ class Map:
     _map_20x10 = map20x10
     _map_40x40 = map40x40
     _stone_map_10x10 = stone_map10x10
+    _stone_map_40x40 = stone_map40x40
 
     def __init__(self, program):
-        map = Map._stone_map_10x10
+        map = Map._stone_map_40x40
         self.map = map
         self.width = program.settings.field_size * len(self.map[0])
         self.height = len(self.map) * program.settings.field_size
@@ -164,6 +251,8 @@ class Map:
             "res/graphic/ground/stone_wall_w.png").convert()
         self.stone_wall_e_img = pygame.image.load(
             "res/graphic/ground/stone_wall_e.png").convert()
+        self.stone_wall_inside_img = pygame.image.load(
+            "res/graphic/ground/stone_wall_inside.png")
 
         self.sheet_img = pygame.image.load("hatka.png").convert_alpha()
         self.sheet_img = pygame.transform.scale(self.sheet_img, (64, 64))
@@ -176,8 +265,23 @@ class Map:
     def _load_obstacles(self):
         for i, row in enumerate(self.map):
             for j, field in enumerate(row):
-                if field == 11:
-                    obstacle = Obstacle(j, i)
+                # if field == 11:
+                #     obstacle = Obstacle(j, i)
+                #     self.obstacles.add(obstacle)
+                if field == "sws":
+                    obstacle = Obstacle(j, i, self.stone_wall_s_img)
+                    self.obstacles.add(obstacle)
+                if field == "swn":
+                    obstacle = Obstacle(j, i, self.stone_wall_n_img)
+                    self.obstacles.add(obstacle)
+                if field == "swe":
+                    obstacle = Obstacle(j, i, self.stone_wall_e_img)
+                    self.obstacles.add(obstacle)
+                if field == "sww":
+                    obstacle = Obstacle(j, i, self.stone_wall_w_img)
+                    self.obstacles.add(obstacle)
+                if field == "swi":
+                    obstacle = Obstacle(j, i, self.stone_wall_inside_img)
                     self.obstacles.add(obstacle)
 
     def display_map(self):
@@ -224,7 +328,7 @@ class Map:
                 if field == "sws":
                     x = j * self.field_width
                     y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_img,
+                    self.program.camera.camera_draw(self.stone_wall_s_img,
                                                     (x, y))
                     self._draw_grid(x, y, self.field_width,
                                     self.field_width)
@@ -246,6 +350,13 @@ class Map:
                     x = j * self.field_width
                     y = i * self.field_height
                     self.program.camera.camera_draw(self.stone_wall_w_img,
+                                                    (x, y))
+                    self._draw_grid(x, y, self.field_width,
+                                    self.field_width)
+                if field == "swi":
+                    x = j * self.field_width
+                    y = i * self.field_height
+                    self.program.camera.camera_draw(self.stone_wall_inside_img,
                                                     (x, y))
                     self._draw_grid(x, y, self.field_width,
                                     self.field_width)
