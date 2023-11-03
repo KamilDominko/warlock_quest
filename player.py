@@ -79,40 +79,74 @@ class Player(pygame.sprite.Sprite):
     #         if field.rect.colliderect(rect):
     #             self.rect.x += self.speed
 
+    # def _move2(self):
+    #     _speed = self.speed
+    #     if self._state_up:
+    #         for obstacle in self.obstacles:
+    #             rect = pygame.Rect(self.rect.x, self.rect.y - self.speed,
+    #                                self.rect.w, self.rect.h)
+    #             if rect.colliderect(obstacle.rect):
+    #                 _speed = 0
+    #                 break
+    #         self.rect.y -= _speed
+    #     _speed = self.speed
+    #     if self._state_down:
+    #         for obstacle in self.obstacles:
+    #             rect = pygame.Rect(self.rect.x, self.rect.y + self.speed,
+    #                                self.rect.w, self.rect.h)
+    #             if rect.colliderect(obstacle.rect):
+    #                 _speed = 0
+    #                 break
+    #         self.rect.y += _speed
+    #     _speed = self.speed
+    #     if self._state_left:
+    #         for obstacle in self.obstacles:
+    #             rect = pygame.Rect(self.rect.x - self.speed, self.rect.y,
+    #                                self.rect.w, self.rect.h)
+    #             if rect.colliderect(obstacle.rect):
+    #                 _speed = 0
+    #                 break
+    #         self.rect.x -= _speed
+    #     _speed = self.speed
+    #     if self._state_right:
+    #         for obstacle in self.obstacles:
+    #             rect = pygame.Rect(self.rect.x + self.speed, self.rect.y,
+    #                                self.rect.w, self.rect.h)
+    #             if rect.colliderect(obstacle.rect):
+    #                 _speed = 0
+    #                 break
+    #         self.rect.x += _speed
+
     def _move2(self):
         _speed = self.speed
         if self._state_up:
             for obstacle in self.obstacles:
-                rect = pygame.Rect(self.rect.x, self.rect.y - self.speed,
-                                   self.rect.w, self.rect.h)
-                if rect.colliderect(obstacle.rect):
+                feet = self.feet - pygame.math.Vector2(0, self.speed)
+                if obstacle.rect.collidepoint(feet):
                     _speed = 0
                     break
             self.rect.y -= _speed
         _speed = self.speed
         if self._state_down:
             for obstacle in self.obstacles:
-                rect = pygame.Rect(self.rect.x, self.rect.y + self.speed,
-                                   self.rect.w, self.rect.h)
-                if rect.colliderect(obstacle.rect):
+                feet = self.feet + pygame.math.Vector2(0, self.speed)
+                if obstacle.rect.collidepoint(feet):
                     _speed = 0
                     break
             self.rect.y += _speed
         _speed = self.speed
         if self._state_left:
             for obstacle in self.obstacles:
-                rect = pygame.Rect(self.rect.x - self.speed, self.rect.y,
-                                   self.rect.w, self.rect.h)
-                if rect.colliderect(obstacle.rect):
+                feet = self.feet - pygame.math.Vector2(self.speed, 0)
+                if obstacle.rect.collidepoint(feet):
                     _speed = 0
                     break
             self.rect.x -= _speed
         _speed = self.speed
         if self._state_right:
             for obstacle in self.obstacles:
-                rect = pygame.Rect(self.rect.x + self.speed, self.rect.y,
-                                   self.rect.w, self.rect.h)
-                if rect.colliderect(obstacle.rect):
+                feet = self.feet + pygame.math.Vector2(self.speed, 0)
+                if obstacle.rect.collidepoint(feet):
                     _speed = 0
                     break
             self.rect.x += _speed
@@ -167,7 +201,8 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
 
     def _draw_feet(self):
-        pygame.draw.circle(self.program.screen, (0, 0, 255), self.feet, 3)
+        feet = self.program.camera.update_point(self.feet)
+        pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
 
     def move(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
@@ -261,6 +296,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         # self._move()
+        self.feet = self.rect.midbottom
         self._animation_state()
         self._move2()
         center = self.program.camera.update_rect(self.rect)
@@ -288,4 +324,7 @@ class Player(pygame.sprite.Sprite):
         if DEV:
             self._draw_rect()
             self._draw_feet()
+
+            z = self.feet - pygame.math.Vector2(0, 1000)
+            # print(f"{self.feet}\n{z}")
         # print(self.rect.center)

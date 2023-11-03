@@ -325,46 +325,49 @@ class Map:
                     self.program.camera.camera_draw(self.stone_img, (x, y))
                     self._draw_grid(x, y, self.field_width,
                                     self.field_width)
-                if field == "sws":
-                    x = j * self.field_width
-                    y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_s_img,
-                                                    (x, y))
-                    self._draw_grid(x, y, self.field_width,
-                                    self.field_width)
-                if field == "swn":
-                    x = j * self.field_width
-                    y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_n_img,
-                                                    (x, y))
-                    self._draw_grid(x, y, self.field_width,
-                                    self.field_width)
-                if field == "swe":
-                    x = j * self.field_width
-                    y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_e_img,
-                                                    (x, y))
-                    self._draw_grid(x, y, self.field_width,
-                                    self.field_width)
-                if field == "sww":
-                    x = j * self.field_width
-                    y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_w_img,
-                                                    (x, y))
-                    self._draw_grid(x, y, self.field_width,
-                                    self.field_width)
-                if field == "swi":
-                    x = j * self.field_width
-                    y = i * self.field_height
-                    self.program.camera.camera_draw(self.stone_wall_inside_img,
-                                                    (x, y))
-                    self._draw_grid(x, y, self.field_width,
-                                    self.field_width)
+                # if field == "sws":
+                #     x = j * self.field_width
+                #     y = i * self.field_height
+                #     self.program.camera.camera_draw(self.stone_wall_s_img,
+                #                                     (x, y))
+                #     self._draw_grid(x, y, self.field_width,
+                #                     self.field_width)
+                # if field == "swn":
+                #     x = j * self.field_width
+                #     y = i * self.field_height
+                #     self.program.camera.camera_draw(self.stone_wall_n_img,
+                #                                     (x, y))
+                #     self._draw_grid(x, y, self.field_width,
+                #                     self.field_width)
+                # if field == "swe":
+                #     x = j * self.field_width
+                #     y = i * self.field_height
+                #     self.program.camera.camera_draw(self.stone_wall_e_img,
+                #                                     (x, y))
+                #     self._draw_grid(x, y, self.field_width,
+                #                     self.field_width)
+                # if field == "sww":
+                #     x = j * self.field_width
+                #     y = i * self.field_height
+                #     self.program.camera.camera_draw(self.stone_wall_w_img,
+                #                                     (x, y))
+                #     self._draw_grid(x, y, self.field_width,
+                #                     self.field_width)
+                # if field == "swi":
+                #     x = j * self.field_width
+                #     y = i * self.field_height
+                #     self.program.camera.camera_draw(self.stone_wall_inside_img,
+                #                                     (x, y))
+                #     self._draw_grid(x, y, self.field_width,
+                #                     self.field_width)
                 if field == 11:
                     for obstacle in self.obstacles:
                         if obstacle.y == i and obstacle.x == j:
                             obstacle.display(self.program.screen,
                                              self.program.camera)
+        # for obstacle in self.obstacles:
+        #     obstacle.display(self.program.screen, self.program.camera)
+        self.obstacles.update(self.program.screen, self.program.camera)
 
     def _draw_grid(self, x, y, w, h):
         pass

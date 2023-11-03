@@ -26,6 +26,9 @@ class Camera(pygame.sprite.Group):
         rect = pygame.Rect((topleft), (rect.w, rect.h))
         return rect
 
+    def update_point(self, point):
+        return point - self.offset
+
     def update_mouse(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         adjusted_mouse_x = mouse_x + self.offset[0]
