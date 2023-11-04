@@ -12,7 +12,7 @@ class Program:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.get_res()))
         pygame.display.set_caption(self.settings.title)
-        icon = pygame.image.load("icon64.png")
+        icon = pygame.image.load("res/graphic/icon/icon64.png")
         pygame.display.set_icon(icon)
         self.map = Map(self)
         self.player = Player(self)
