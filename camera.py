@@ -6,16 +6,23 @@ class Camera(pygame.sprite.Group):
 
     def __init__(self, program):
         super().__init__()
-        self.settings = program.settings
+        self.program = program
         self.screen = program.screen
-        self.player = program.player
+        # self.player = program.player
         self.x = 0
         self.y = 0
         self.offset = pygame.math.Vector2()
 
-    def update(self):
-        self.offset.x = self.player.rect.centerx - self.screen.get_width() // 2
-        self.offset.y = self.player.rect.centery - self.screen.get_height() // 2
+    def draw_y_sorted(self):
+        for sprite in sorted(self.sprites(),
+                             key=lambda sprite: sprite.rect.centery):
+            sprite.display()
+
+    def update_offset(self):
+        self.offset.x = self.program.player.rect.centerx - \
+                        self.screen.get_width() // 2
+        self.offset.y = self.program.player.rect.centery - \
+                        self.screen.get_height() // 2
 
     def camera_draw(self, image, topleft):
         _offset = topleft - self.offset
@@ -28,6 +35,12 @@ class Camera(pygame.sprite.Group):
 
     def update_point(self, point):
         return point - self.offset
+
+    def give_mouse(self):
+        x, y = pygame.mouse.get_pos()
+        x += self.offset[0]
+        y += self.offset[1]
+        return x, y
 
     def update_mouse(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()

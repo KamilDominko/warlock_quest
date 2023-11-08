@@ -10,6 +10,8 @@ class Settings:
         self.player_speed = 5
         self.player_sprint = 7
 
+        self.enemy_speed = 2
+
         self.projectile_speed = 17
 
         self.field_size = 128

@@ -4,6 +4,7 @@ from settings import Settings
 from map import Map
 from player import Player
 from camera import Camera
+from enemy import Enemy
 
 
 class Program:
@@ -17,7 +18,9 @@ class Program:
         self.map = Map(self)
         self.player = Player(self)
         self.camera = Camera(self)
+        self.camera.add(self.player)
         self.clock = pygame.time.Clock()
+        self.enemies = pygame.sprite.Group()
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -26,16 +29,26 @@ class Program:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.isRunning = False
+                # DEV spawnuje wroga w miejscach myszki
+                if event.key == pygame.K_KP1:
+                    x, y = self.camera.give_mouse()
+                    for i in range(1):
+                        self.camera.add(Enemy(self, x, y))
+
             self.player.input(event)
 
     def _update_entities(self):
-        self.player.update()
+        # self.player.update()
         self.camera.update()
+        self.camera.update_offset()
 
     def _update_screen(self):
         self.screen.fill((0, 0, 0))
         self.map.display()
-        self.player.display()
+        # self.player.display()
+        # for enemy in self.enemies:
+        #     enemy.display()
+        self.camera.draw_y_sorted()
         pygame.display.update()
 
     def run(self):

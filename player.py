@@ -5,12 +5,18 @@ from weapon import Weapon
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, program):
+    def __init__(self, program, x=300, y=300):
         super().__init__()
         self.program = program
+        self.x = x
+        self.y = y
         self.image = pygame.surface.Surface((64, 128))
-        self.rect = self.image.get_rect(center=program.screen.get_rect().center)
-        self.feet = self.rect.midbottom
+        self.rect = self.image.get_rect(center=(x, y))
+        self.feet = self.image.get_rect(center=self.rect.midbottom,
+                                        width=32, height=32)
+        # self.feet = self.rect.midbottom
+        # self.foot = self.image.get_rect(center=self.rect.midbottom,
+        #                                 width=32, height=32)
         self.speed = program.settings.player_speed
         self.walk = program.settings.player_speed
         self.sprint = program.settings.player_sprint
@@ -72,28 +78,54 @@ class Player(pygame.sprite.Sprite):
         self._check_animation_state(self._state_right, self.animation_right)
 
     def _move(self):
-        move_vectors = [pygame.math.Vector2(0, -self.speed),
-                        pygame.math.Vector2(0, self.speed),
-                        pygame.math.Vector2(-self.speed, 0),
-                        pygame.math.Vector2(self.speed, 0)]
-        for i in range(4):
-            if (i == 0 and self._state_up) or (i == 1 and self._state_down) or (
-                    i == 2 and self._state_left) or (
-                    i == 3 and self._state_right):
-                _speed = self.speed
-                _feet = self.feet + move_vectors[i]
-                for obstacle in self.obstacles:
-                    if obstacle.rect.collidepoint(_feet):
-                        _speed = 0
-                        break
-                if i == 0:
-                    self.rect.y -= _speed
-                elif i == 1:
-                    self.rect.y += _speed
-                elif i == 2:
-                    self.rect.x -= _speed
-                elif i == 3:
-                    self.rect.x += _speed
+        # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
+        speed_x = 0
+        speed_y = 0
+        if self._state_left:
+            speed_x = -self.speed
+        elif self._state_right:
+            speed_x = self.speed
+        if self._state_up:
+            speed_y = -self.speed
+        elif self._state_down:
+            speed_y = self.speed
+
+        # Ustal nową pozycję gracza w pionie
+        new_y = self.feet.y + speed_y
+
+        # Tworzy nowy rect na podstawie nowych współrzędnych w pionie
+        new_rect_y = self.feet.copy()
+        new_rect_y.y = new_y
+
+        # Sprawdza kolizje z przeszkodami w pionie
+        for obstacle in self.obstacles:
+            if new_rect_y.colliderect(obstacle.rect):
+                if speed_y > 0:
+                    new_y = obstacle.rect.top - self.feet.height
+                elif speed_y < 0:
+                    new_y = obstacle.rect.bottom
+
+        # Ustal nową pozycję gracza w poziomie
+        new_x = self.feet.x + speed_x
+
+        # Tworzy nowy rect na podstawie nowych współrzędnych w poziomie
+        new_rect_x = self.feet.copy()
+        new_rect_x.x = new_x
+
+        # Sprawdza kolizje z przeszkodami w poziomie
+        for obstacle in self.obstacles:
+            if new_rect_x.colliderect(obstacle.rect):
+                if speed_x > 0:
+                    new_x = obstacle.rect.left - self.feet.width
+                elif speed_x < 0:
+                    new_x = obstacle.rect.right
+
+        # Aktualizuje pozycję gracza
+        self.feet.x = new_x
+        self.feet.y = new_y
+        # Aktualizuje pozycję rect'a gracza na podstawie rect'a self.feet
+        self.rect.midbottom = self.feet.midbottom
+
 
     def input(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
@@ -127,7 +159,11 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self._move()
-        self.feet = self.rect.midbottom
+        self.feet = self.image.get_rect(width=25, height=25,
+                                        midbottom=self.rect.midbottom)
+        # self.feet = self.rect.midbottom
+        # self.foot = self.image.get_rect(width=32, height = 32,
+        #                                 midbottom=self.feet)
         self._animation_state()
         center = self.program.camera.update_rect(self.rect)
         self.weapon.update(center.center)
@@ -143,15 +179,25 @@ class Player(pygame.sprite.Sprite):
             self.weapon.display()
             self.program.camera.camera_draw(self.image, self.rect.topleft)
 
-        DEV = 0
+        DEV = 1
         if DEV:
             self._draw_rect()
             self._draw_feet()
+            # self._draw_foot()
+            self._draw_feet_rect()
 
     def _draw_rect(self):
         rect = self.program.camera.update_rect(self.rect)
         pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
 
     def _draw_feet(self):
-        feet = self.program.camera.update_point(self.feet)
+        feet = self.program.camera.update_point(self.feet.midbottom)
         pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
+
+    def _draw_feet_rect(self):
+        feet_rect = self.program.camera.update_rect(self.feet)
+        pygame.draw.rect(self.program.screen, (0, 0, 255), feet_rect, 3)
+
+    def _draw_foot(self):
+        foot = self.program.camera.update_rect(self.foot)
+        pygame.draw.rect(self.program.screen, (0, 0, 255), foot, 3)
