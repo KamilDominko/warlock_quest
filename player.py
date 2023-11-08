@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.sprint = program.settings.player_sprint
         self.weapon = Weapon(self, self.program)
         self.obstacles = program.map.obstacles
+        program.map.obstacles.add(self)
         self._state_up = 0
         self._state_down = 0
         self._state_left = 0
@@ -77,55 +78,89 @@ class Player(pygame.sprite.Sprite):
         self._check_animation_state(self._state_left, self.animation_left)
         self._check_animation_state(self._state_right, self.animation_right)
 
+    # def _move(self):
+    #     # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
+    #     speed_x = 0
+    #     speed_y = 0
+    #     if self._state_left:
+    #         speed_x = -self.speed
+    #     elif self._state_right:
+    #         speed_x = self.speed
+    #     if self._state_up:
+    #         speed_y = -self.speed
+    #     elif self._state_down:
+    #         speed_y = self.speed
+    #
+    #     # Ustal nową pozycję gracza w pionie
+    #     new_y = self.feet.y + speed_y
+    #
+    #     # Tworzy nowy rect na podstawie nowych współrzędnych w pionie
+    #     new_rect_y = self.feet.copy()
+    #     new_rect_y.y = new_y
+    #
+    #     # Sprawdza kolizje z przeszkodami w pionie
+    #     for obstacle in self.obstacles:
+    #         if new_rect_y.colliderect(obstacle.rect):
+    #             if speed_y > 0:
+    #                 new_y = obstacle.rect.top - self.feet.height
+    #             elif speed_y < 0:
+    #                 new_y = obstacle.rect.bottom
+    #
+    #     # Ustal nową pozycję gracza w poziomie
+    #     new_x = self.feet.x + speed_x
+    #
+    #     # Tworzy nowy rect na podstawie nowych współrzędnych w poziomie
+    #     new_rect_x = self.feet.copy()
+    #     new_rect_x.x = new_x
+    #
+    #     # Sprawdza kolizje z przeszkodami w poziomie
+    #     for obstacle in self.obstacles:
+    #         if new_rect_x.colliderect(obstacle.rect):
+    #             if speed_x > 0:
+    #                 new_x = obstacle.rect.left - self.feet.width
+    #             elif speed_x < 0:
+    #                 new_x = obstacle.rect.right
+    #
+    #     # Aktualizuje pozycję gracza
+    #     self.feet.x = new_x
+    #     self.feet.y = new_y
+    #     # Aktualizuje pozycję rect'a gracza na podstawie rect'a self.feet
+    #     self.rect.midbottom = self.feet.midbottom
+
     def _move(self):
+        """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
+        przeszkodami, przez które gracz nie może przejść."""
         # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
-        speed_x = 0
-        speed_y = 0
-        if self._state_left:
-            speed_x = -self.speed
-        elif self._state_right:
-            speed_x = self.speed
-        if self._state_up:
-            speed_y = -self.speed
-        elif self._state_down:
-            speed_y = self.speed
-
-        # Ustal nową pozycję gracza w pionie
-        new_y = self.feet.y + speed_y
-
-        # Tworzy nowy rect na podstawie nowych współrzędnych w pionie
-        new_rect_y = self.feet.copy()
-        new_rect_y.y = new_y
-
-        # Sprawdza kolizje z przeszkodami w pionie
-        for obstacle in self.obstacles:
-            if new_rect_y.colliderect(obstacle.rect):
-                if speed_y > 0:
-                    new_y = obstacle.rect.top - self.feet.height
-                elif speed_y < 0:
-                    new_y = obstacle.rect.bottom
-
-        # Ustal nową pozycję gracza w poziomie
+        speed_x = -self.speed if self._state_left else self.speed if self._state_right else 0
+        speed_y = -self.speed if self._state_up else self.speed if self._state_down else 0
+        # Ustal nową pozycję gracza w poziomie i pionie
         new_x = self.feet.x + speed_x
-
-        # Tworzy nowy rect na podstawie nowych współrzędnych w poziomie
+        new_y = self.feet.y + speed_y
+        # Utwórz hipotetyczne rect'y dla ruchu w poziomie i pionie
         new_rect_x = self.feet.copy()
         new_rect_x.x = new_x
-
-        # Sprawdza kolizje z przeszkodami w poziomie
+        new_rect_y = self.feet.copy()
+        new_rect_y.y = new_y
+        # Spraawdź kolizję hipotetycznych rect'ów
         for obstacle in self.obstacles:
-            if new_rect_x.colliderect(obstacle.rect):
-                if speed_x > 0:
-                    new_x = obstacle.rect.left - self.feet.width
-                elif speed_x < 0:
-                    new_x = obstacle.rect.right
-
-        # Aktualizuje pozycję gracza
+            if obstacle != self:
+                # Sprawdza kolizje z przeszkodami w poziomie
+                if new_rect_x.colliderect(obstacle.feet):
+                    if speed_x > 0:
+                        new_x = obstacle.feet.left - self.feet.width
+                    elif speed_x < 0:
+                        new_x = obstacle.feet.right
+                # Sprawdza kolizje z przeszkodami w pionie
+                if new_rect_y.colliderect(obstacle.feet):
+                    if speed_y > 0:
+                        new_y = obstacle.feet.top - self.feet.height
+                    elif speed_y < 0:
+                        new_y = obstacle.feet.bottom
+        # Aktualizuje pozycję self.feet
         self.feet.x = new_x
         self.feet.y = new_y
-        # Aktualizuje pozycję rect'a gracza na podstawie rect'a self.feet
+        # Aktualizuje pozycję self.rect na podstawie self.feet
         self.rect.midbottom = self.feet.midbottom
-
 
     def input(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
@@ -159,7 +194,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self._move()
-        self.feet = self.image.get_rect(width=25, height=25,
+        self.feet = self.image.get_rect(width=32, height=16,
                                         midbottom=self.rect.midbottom)
         # self.feet = self.rect.midbottom
         # self.foot = self.image.get_rect(width=32, height = 32,

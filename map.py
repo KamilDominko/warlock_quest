@@ -115,7 +115,8 @@ class Map:
 
         self._load_images()
 
-        self.obstacles = pygame.sprite.Group()
+        self.obstacles = pygame.sprite.Group()  # Dla całej gry
+        self._obstacles = []  # Tylko dla tej klasy
         self._load_obstacles()
 
         self.field_size = program.settings.field_size
@@ -138,20 +139,30 @@ class Map:
         for i, row in enumerate(self.map):
             for j, field in enumerate(row):
                 if field == "sws":
-                    obstacle = Obstacle(j, i, self.stone_wall_s_img)
+                    obstacle = Obstacle(self.program, j, i,
+                                        self.stone_wall_s_img)
                     self.obstacles.add(obstacle)
+                    self._obstacles.append(obstacle)
                 if field == "swn":
-                    obstacle = Obstacle(j, i, self.stone_wall_n_img)
+                    obstacle = Obstacle(self.program, j, i,
+                                        self.stone_wall_n_img)
                     self.obstacles.add(obstacle)
+                    self._obstacles.append(obstacle)
                 if field == "swe":
-                    obstacle = Obstacle(j, i, self.stone_wall_e_img)
+                    obstacle = Obstacle(self.program, j, i,
+                                        self.stone_wall_e_img)
                     self.obstacles.add(obstacle)
+                    self._obstacles.append(obstacle)
                 if field == "sww":
-                    obstacle = Obstacle(j, i, self.stone_wall_w_img)
+                    obstacle = Obstacle(self.program, j, i,
+                                        self.stone_wall_w_img)
                     self.obstacles.add(obstacle)
+                    self._obstacles.append(obstacle)
                 if field == "swi":
-                    obstacle = Obstacle(j, i, self.stone_wall_inside_img)
+                    obstacle = Obstacle(self.program, j, i,
+                                        self.stone_wall_inside_img)
                     self.obstacles.add(obstacle)
+                    self._obstacles.append(obstacle)
 
     def display(self):
         for i, row in enumerate(self.map):
@@ -164,7 +175,10 @@ class Map:
                 DEV = 0
                 if DEV:
                     self._draw_grid(x, y)
-        self.obstacles.update(self.program.screen, self.program.camera)
+        # for obstacle in self.obstacles:
+        #     obstacle.display()
+        for obstacle in self._obstacles:
+            obstacle.display()
 
     def _draw_grid(self, x, y):
         _offset = (x, y) - self.program.camera.offset
