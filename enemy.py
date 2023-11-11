@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 import os
@@ -13,7 +15,12 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(centerx, centery))
         self.feet = self.image.get_rect(center=self.rect.midbottom,
                                         width=32, height=32)
+        self.hitbox = self.image.get_rect(center=self.rect.midbottom,
+                                          width=32, height=128)
         self.speed = program.settings.enemy_speed
+        self.speed += random.randrange(2)
+        self.max_healt = program.settings.enemy_health
+        self.current_healt = self.max_healt
         self.moving_up = 0
         self.moving_down = 0
         self.moving_left = 0
@@ -151,18 +158,18 @@ class Enemy(pygame.sprite.Sprite):
                 # Sprawdza kolizje z przeszkodami w poziomie
                 if new_rect_x.colliderect(obstacle.feet):
                     if speed_x > 0:
-                        new_x = obstacle.feet.left - self.feet.width
+                        speed_x = 0
                     elif speed_x < 0:
-                        new_x = obstacle.feet.right
+                        speed_x = 0
                 # Sprawdza kolizje z przeszkodami w pionie
                 if new_rect_y.colliderect(obstacle.feet):
                     if speed_y > 0:
-                        new_y = obstacle.feet.top - self.feet.height
+                        speed_y = 0
                     elif speed_y < 0:
-                        new_y = obstacle.feet.bottom
-        # Aktualizuje pozycję self.feet
-        self.feet.x = new_x
-        self.feet.y = new_y
+                        speed_y = 0
+            # Aktualizuje pozycję self.feet
+        self.feet.x += speed_x
+        self.feet.y += speed_y
         # Aktualizuje pozycję self.rect na podstawie self.feet
         self.rect.midbottom = self.feet.midbottom
 
@@ -172,86 +179,43 @@ class Enemy(pygame.sprite.Sprite):
 
         self_feet = self.rect.midbottom
         player_feet = self.program.player.feet.midbottom
-        #
-        # # Sprawdź, czy jesteś w zasięgu zainteresowania gracza.
-        # range_x = 200
-        # range_y = 200
-        # dist_x = self_feet[0] - player_feet[0]
-        # dist_y = self_feet[1] - player_feet[1]
-        #
-        # if player_feet[0] - range_x < self_feet[0] < player_feet[0] + range_x:
-        #     if player_feet[0] > self_feet[0] and self_feet != player_feet:
-        #         self.moving_left = 0
-        #         self.moving_right = 1
-        #     if player_feet[0] < self_feet[0] and self_feet != player_feet:
-        #         self.moving_right = 0
-        #         self.moving_left = 1
-        # if player_feet[1] - range_y < self_feet[1] < player_feet[1] + range_y:
-        #     if player_feet[1] > self_feet[1] and self_feet != player_feet:
-        #         self.moving_up = 0
-        #         self.moving_down = 1
-        #     if player_feet[1] < self_feet[1] and self_feet != player_feet:
-        #         self.moving_down = 0
-        #         self.moving_up = 1
 
-        # Jeżeli wróg jest poza zasięgiem zainteresowania x
-        # if self_feet[0] < player_feet[0] - range_x:
-        #     self.moving_left = 0
-        #     self.moving_right = 1
-        # elif self_feet[0] > player_feet[0] + range_x:
-        #     self.moving_right = 0
-        #     self.moving_left = 1
+        # Oblicz wektor kierunku od wroga do gracza
+        vector = (player_feet[0] - self_feet[0], player_feet[1] - self_feet[1])
 
-        # # Jeżeli wróg jest poza zasięgiem zmierzania do gracza.
-        # if self_feet[1] < player_feet[1] - range_y:
-        #     self.moving_up = 0
-        #     self.moving_down = 1
-        # elif self_feet[1] > player_feet[1] + range_y:
-        #     self.moving_down = 0
-        #     self.moving_up = 1
-        # else:
-        #     self.moving_up = 0
-        #     self.moving_down = 0
-        # if self_feet[0] < player_feet[0] - range_x:
-        #     self.moving_left = 0
-        #     self.moving_right = 1
-        # elif self_feet[0] > player_feet[0] + range_x:
-        #     self.moving_right = 0
-        #     self.moving_left = 1
-        # else:
-        #     self.moving_left = 0
-        #     self.moving_right = 0
-        # # Jeżeli wróg jest w zasięgu zmierzania do gracza.
-        # if self_feet[1] >= player_feet[1] - range_y and \
-        #         self_feet[1] <= player_feet[1] + range_y:
-        #     if dist_x < 0:
-        #         self.moving_left = 0
-        #         self.moving_right = 1
-        #     elif dist_x > 0:
-        #         self.moving_right = 0
-        #         self.moving_left = 1
-        # if self_feet[0] >= player_feet[0] - range_x and \
-        #         self_feet[0] <= player_feet[1] + range_x:
-        #     if dist_y < 0:
-        #         print("asd")
-        #         self.moving_up = 0
-        #         self.moving_down = 1
-        #     elif dist_y < 0:
-        #         self.moving_down = 0
-        #         self.moving_up = 1
+        # Oblicz długość wektora
+        length = math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
-        if player_feet[0] > self_feet[0] and self_feet != player_feet:
-            self.moving_left = 0
-            self.moving_right = 1
-        if player_feet[0] < self_feet[0] and self_feet != player_feet:
-            self.moving_right = 0
-            self.moving_left = 1
-        if player_feet[1] > self_feet[1] and self_feet != player_feet:
-            self.moving_up = 0
-            self.moving_down = 1
-        if player_feet[1] < self_feet[1] and self_feet != player_feet:
-            self.moving_down = 0
-            self.moving_up = 1
+        # Unikaj dzielenia przez zero
+        if length != 0:
+            # Normalizuj wektor
+            normalized_vector = (vector[0] / length, vector[1] / length)
+
+            # Sprawdź, czy wrogowi nie zostało już zbyt mało do przesunięcia
+            if length > self.speed:
+                # Ustaw odpowiednie prędkości w zależności od kierunku
+                if not self.feet.left < self.program.player.feet.right:
+                    self.moving_left = normalized_vector[0] < 0
+                else:
+                    self.moving_left = 0
+                if not self.feet.right > self.program.player.feet.left:
+                    self.moving_right = normalized_vector[0] > 0
+                else:
+                    self.moving_right = 0
+                if not self.feet.top < self.program.player.feet.bottom:
+                    self.moving_up = normalized_vector[1] < 0
+                else:
+                    self.moving_up = 0
+                if not self.feet.bottom > self.program.player.feet.top:
+                    self.moving_down = normalized_vector[1] > 0
+                else:
+                    self.moving_down = 0
+            else:
+                # Zatrzymaj wroga, gdy jest wystarczająco blisko gracza
+                self.moving_left = False
+                self.moving_right = False
+                self.moving_up = False
+                self.moving_down = False
 
     def update(self):
         self._ai()
@@ -259,19 +223,26 @@ class Enemy(pygame.sprite.Sprite):
         self._move()
         self.feet = self.image.get_rect(width=48, height=16,
                                         midbottom=self.rect.midbottom)
+        self.hitbox = self.image.get_rect(width=32, height=128,
+                                          midbottom=self.rect.midbottom)
 
     def display(self):
         self.program.camera.camera_draw(self.image, self.rect.topleft)
 
-        DEV = 1
+        DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_feet_rect()
+            self._draw_hit_box()
 
     def _draw_rect(self):
         rect = self.program.camera.update_rect(self.rect)
-        pygame.draw.rect(self.program.screen, (255, 0, 0), rect, 2)
+        pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
 
     def _draw_feet_rect(self):
         feet_rect = self.program.camera.update_rect(self.feet)
         pygame.draw.rect(self.program.screen, (0, 0, 255), feet_rect, 3)
+
+    def _draw_hit_box(self):
+        hitBox = self.program.camera.update_rect(self.hitbox)
+        pygame.draw.rect(self.program.screen, (255, 0, 0), hitBox, 2)

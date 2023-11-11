@@ -5,6 +5,8 @@ from map import Map
 from player import Player
 from camera import Camera
 from enemy import Enemy
+from spawner import Spawner
+from information import Information
 
 
 class Program:
@@ -20,7 +22,11 @@ class Program:
         self.camera = Camera(self)
         self.camera.add(self.player)
         self.clock = pygame.time.Clock()
+        self.startTime = pygame.time.get_ticks()
         self.enemies = pygame.sprite.Group()
+        self.spawner = Spawner(self)
+        self.information = Information(self)
+        self.showInfo = False
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -33,7 +39,26 @@ class Program:
                 if event.key == pygame.K_KP1:
                     x, y = self.camera.give_mouse()
                     for i in range(1):
-                        self.camera.add(Enemy(self, x, y))
+                        enemy = Enemy(self, x, y)
+                        self.camera.add(enemy)
+                        self.enemies.add(enemy)
+                if event.key == pygame.K_KP2:
+                    x, y = self.spawner.create_enemy()
+                    for i in range(1):
+                        enemy = Enemy(self, x, y)
+                        self.camera.add(enemy)
+                        self.enemies.add(enemy)
+                if event.key == pygame.K_KP3:
+                    print(len(self.enemies))
+                    for enemy in self.enemies:
+                        enemy.kill()
+                if event.key == pygame.K_KP_PLUS:
+                    self.player.attackSpeed += 0.5
+                if event.key == pygame.K_KP_MINUS:
+                    self.player.attackSpeed -= 0.5
+                if event.key == pygame.K_KP_MULTIPLY:
+                    self.showInfo = not self.showInfo
+                    print(self.showInfo)
 
             self.player.input(event)
 
@@ -49,6 +74,8 @@ class Program:
         # for enemy in self.enemies:
         #     enemy.display()
         self.camera.draw_y_sorted()
+        if self.showInfo:
+            self.information.display_info()
         pygame.display.update()
 
     def run(self):
@@ -56,6 +83,7 @@ class Program:
             self._check_events()
             self._update_entities()
             self._update_screen()
+            self.spawner.update()
             self.clock.tick(self.settings.fps)
         pygame.quit()
 

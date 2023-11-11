@@ -13,7 +13,9 @@ class Weapon(pygame.sprite.Sprite):
             "res/graphic/weapons/staff.png").convert_alpha()
         self.image = self._image
         self.rect = self.image.get_rect()
-        self.speed = self.program.settings.projectile_speed
+        self.projectileSpeed = program.settings.projectile_speed
+        self.damage = program.settings.projectile_damage
+        self.hits = program.settings.projectile_hits
         self.projectiles = pygame.sprite.Group()
         self._projectiles = []
         self.angle = 0

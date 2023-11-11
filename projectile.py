@@ -14,7 +14,10 @@ class Projectile(pygame.sprite.Sprite):
                                              weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        self.speed = weapon.speed
+        self.speed = weapon.projectileSpeed
+        self.damage = weapon.damage
+        self.hits = weapon.hits
+        self.hited = []
 
         self.x, self.y = self._adjusted_x_y(
             self.program.camera.update_mouse()[0],
@@ -37,14 +40,28 @@ class Projectile(pygame.sprite.Sprite):
         y = weapon.rect.centery + direction_y * 64
         return x, y
 
+    def _enemy_collision(self):
+        for enemy in self.program.enemies:
+            # Jeżeli rect pocisku dotyka rect wroga
+            if self.rect.colliderect(enemy.hitbox) and enemy not in self.hited:
+                self.hited.append(enemy)
+                enemy.current_healt -= self.damage
+                if enemy.current_healt < 0:
+                    enemy.kill()
+                if len(self.hited) == self.hits:
+                    self.kill()
+                break
+
     def update(self):
         self.x += self.dx
         self.y += self.dy
         self.rect.centerx = int(self.x)
         self.rect.centery = int(self.y)
+        self._enemy_collision()
         self._check_borders()
 
     def _check_borders(self):
+        """Jeżeli pocisk wyleci poza ekran, zniszcz go."""
         rect = self.program.camera.update_rect(self.rect)
         if rect.left > self.program.screen.get_width():
             self.kill()
