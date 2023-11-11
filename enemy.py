@@ -17,6 +17,7 @@ class Enemy(pygame.sprite.Sprite):
                                         width=32, height=32)
         self.hitbox = self.image.get_rect(center=self.rect.midbottom,
                                           width=32, height=128)
+        self.hited = 0
         self.speed = program.settings.enemy_speed
         self.speed += random.randrange(2)
         self.max_healt = program.settings.enemy_health
@@ -229,11 +230,21 @@ class Enemy(pygame.sprite.Sprite):
     def display(self):
         self.program.camera.camera_draw(self.image, self.rect.topleft)
 
+        if pygame.time.get_ticks() - self.hited < 200:
+            mask = pygame.mask.from_surface(self.image)
+            maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
+                                      setcolor=(150, 0, 0, 150))
+            point = self.program.camera.update_point((self.rect.topleft))
+            self.program.screen.blit(maksSrf, point)
+        else:
+            self.hited = 0
+
         DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_feet_rect()
             self._draw_hit_box()
+            self._draw_mask()
 
     def _draw_rect(self):
         rect = self.program.camera.update_rect(self.rect)
@@ -246,3 +257,11 @@ class Enemy(pygame.sprite.Sprite):
     def _draw_hit_box(self):
         hitBox = self.program.camera.update_rect(self.hitbox)
         pygame.draw.rect(self.program.screen, (255, 0, 0), hitBox, 2)
+
+    def _draw_mask(self):
+        mask = pygame.mask.from_surface(self.image)
+        maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0), setcolor=(150, 0,
+                                                                     0, 150))
+        # maksSrf.fill((0, 255, 0))
+        point = self.program.camera.update_point((self.rect.topleft))
+        self.program.screen.blit(maksSrf, point)
