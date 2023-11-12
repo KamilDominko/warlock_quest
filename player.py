@@ -1,3 +1,5 @@
+import math
+
 import pygame
 
 import os
@@ -34,6 +36,8 @@ class Player(pygame.sprite.Sprite):
         self.reload = 0
         self.attack = 0
         self.isShooting = False
+        self.radius = 200
+        self.circleColor = (0, 255, 0)
         self.obstacles = program.map.obstacles
         program.map.obstacles.add(self)
         self._state_up = 0
@@ -230,6 +234,22 @@ class Player(pygame.sprite.Sprite):
         self._animation_state()
         center = self.program.camera.update_rect(self.rect)
         self.weapon.update(center.center)
+        self._check_circle_range()
+        self._check_items()
+
+    def _check_circle_range(self):
+        # koło?
+        for enemy in self.program.enemies:
+            if self.rect_circle_collision(enemy.feet):
+                self.circleColor = (255, 0, 0)
+                enemy.selected = True
+            else:
+                self.circleColor = (0, 255, 0)
+
+    def _check_items(self):
+        for item in self.program.items:
+            if self.rect_circle_collision(item.rect) and not item.sucked:
+                item.suck()
 
     def display(self):
         if not self._state_up:
@@ -249,6 +269,27 @@ class Player(pygame.sprite.Sprite):
             # self._draw_foot()
             self._draw_feet_rect()
 
+    def rect_circle_collision(self, rect):
+        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty ograniczające
+        bounding_rect = pygame.Rect(self.feet.centerx - self.radius,
+                                    self.feet.bottom - self.radius,
+                                    2 * self.radius, 2 * self.radius)
+
+        if rect.colliderect(bounding_rect):
+            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w odległości nie większej niż promień okręgu od jego centrum
+            for corner in [(rect.left, rect.top), (rect.right, rect.top),
+                           (rect.left, rect.bottom), (rect.right, rect.bottom)]:
+                distance = math.sqrt(
+                    (self.feet.centerx - corner[0]) ** 2 + (
+                            self.feet.bottom - corner[1]) ** 2)
+                if distance <= self.radius:
+                    return True
+
+            # Sprawdź, czy środek okręgu znajduje się w prostokącie
+            return rect.collidepoint(self.feet.centerx, self.feet.bottom)
+
+        return False
+
     def _draw_rect(self):
         rect = self.program.camera.update_rect(self.rect)
         pygame.draw.rect(self.program.screen, (0, 255, 0), rect, 2)
@@ -256,6 +297,8 @@ class Player(pygame.sprite.Sprite):
     def _draw_feet(self):
         feet = self.program.camera.update_point(self.feet.midbottom)
         pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
+        pygame.draw.circle(self.program.screen, self.circleColor,
+                           feet, self.radius, 2)
 
     def _draw_feet_rect(self):
         feet_rect = self.program.camera.update_rect(self.feet)

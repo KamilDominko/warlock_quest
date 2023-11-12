@@ -42,14 +42,15 @@ class Projectile(pygame.sprite.Sprite):
 
     def _enemy_collision(self):
         for enemy in self.program.enemies:
-            # Jeżeli rect pocisku dotyka rect wroga
+            # Jeżeli rect pocisku dotyka hitbox wroga
             if self.rect.colliderect(enemy.hitbox) and enemy not in \
                     self.hited and not enemy.hited:
                 self.hited.append(enemy)
-                enemy.current_healt -= self.damage
-                enemy.hited = pygame.time.get_ticks()
-                if enemy.current_healt < 0:
-                    enemy.kill()
+                enemy.deal_damage(self.damage)
+                # enemy.current_healt -= self.damage
+                # enemy.hited = pygame.time.get_ticks()
+                # if enemy.current_healt < 0:
+                #     enemy.kill()
                 if len(self.hited) == self.hits:
                     self.kill()
                 break
@@ -63,16 +64,25 @@ class Projectile(pygame.sprite.Sprite):
         self._check_borders()
 
     def _check_borders(self):
-        """Jeżeli pocisk wyleci poza ekran, zniszcz go."""
-        rect = self.program.camera.update_rect(self.rect)
-        if rect.left > self.program.screen.get_width():
+        """Jeżeli pocisk wyleci poza mapę, zniszcz go."""
+        if self.rect.left > self.program.map.width:
             self.kill()
-        if rect.right < 0:
+        if self.rect.right < 0:
             self.kill()
-        if rect.bottom < 0:
+        if self.rect.bottom < 0:
             self.kill()
-        if rect.top > self.program.screen.get_height():
+        if self.rect.top > self.program.map.height:
             self.kill()
+        # """Jeżeli pocisk wyleci poza ekran, zniszcz go."""
+        # rect = self.program.camera.update_rect(self.rect)
+        # if rect.left > self.program.screen.get_width():
+        #     self.kill()
+        # if rect.right < 0:
+        #     self.kill()
+        # if rect.bottom < 0:
+        #     self.kill()
+        # if rect.top > self.program.screen.get_height():
+        #     self.kill()
 
     def display(self):
         # self.program.camera.camera_draw(self.image,self.rect.topleft)

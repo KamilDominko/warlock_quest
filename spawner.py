@@ -57,5 +57,5 @@ class Spawner:
             self.program.enemies.add(enemy)
 
     def update(self):
-        self._update()
-        # pass
+        # self._update()
+        pass

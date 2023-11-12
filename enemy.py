@@ -5,6 +5,8 @@ import pygame
 import os
 import random
 
+from xp_orb import XpOrb
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, program, centerx, centery):
@@ -18,6 +20,7 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox = self.image.get_rect(center=self.rect.midbottom,
                                           width=32, height=128)
         self.hited = 0
+        self.selected = False
         self.speed = program.settings.enemy_speed
         self.speed += random.randrange(2)
         self.max_healt = program.settings.enemy_health
@@ -139,6 +142,20 @@ class Enemy(pygame.sprite.Sprite):
     #             elif i == 3:  # Przesuń x o speed w prawo
     #                 self.rect.x += _speed
 
+    def deal_damage(self, damage):
+        self.current_healt -= damage
+        self.hited = pygame.time.get_ticks()
+        if self.current_healt <= 0:
+            self.die()
+
+    def die(self):
+        # Stwórz XP orb w miejscu stóp
+        xpOrb = XpOrb(self.program, self.feet.centerx, self.feet.centery)
+        self.program.items.add(xpOrb)
+        self.program.camera.add(xpOrb)
+        # KYS
+        self.kill()
+
     def _move(self):
         """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
         przeszkodami, przez które gracz nie może przejść."""
@@ -227,17 +244,32 @@ class Enemy(pygame.sprite.Sprite):
         self.hitbox = self.image.get_rect(width=32, height=128,
                                           midbottom=self.rect.midbottom)
 
+    def _check_if_hited(self):
+        if self.hited:
+            if pygame.time.get_ticks() - self.hited < 200:
+                mask = pygame.mask.from_surface(self.image)
+                maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
+                                          setcolor=(150, 0, 0, 150))
+                point = self.program.camera.update_point((self.rect.topleft))
+                self.program.screen.blit(maksSrf, point)
+            else:
+                self.hited = 0
+
+    def _check_if_selected(self):
+        if self.selected:
+            mask = pygame.mask.from_surface(self.image)
+            maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
+                                      setcolor=(255, 255, 255, 150))
+            point = self.program.camera.update_point((self.rect.topleft))
+            self.program.screen.blit(maksSrf, point)
+
+            self.selected = False
+
     def display(self):
         self.program.camera.camera_draw(self.image, self.rect.topleft)
 
-        if pygame.time.get_ticks() - self.hited < 200:
-            mask = pygame.mask.from_surface(self.image)
-            maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
-                                      setcolor=(150, 0, 0, 150))
-            point = self.program.camera.update_point((self.rect.topleft))
-            self.program.screen.blit(maksSrf, point)
-        else:
-            self.hited = 0
+        self._check_if_hited()
+        self._check_if_selected()
 
         DEV = 0
         if DEV:

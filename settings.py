@@ -15,14 +15,14 @@ class Settings:
         self.player_stamina_regen = 3
         self.player_speed = 5
         self.player_sprint = 7
-        self.player_attack_speed = 20.0
+        self.player_attack_speed = 3.0
 
         self.enemy_speed = 1
         self.enemy_health = 100
 
         self.projectile_speed = 17
         self.projectile_damage = 35
-        self.projectile_hits = 3
+        self.projectile_hits = 2
 
         self.field_size = 128
 

@@ -15,7 +15,7 @@ class Camera(pygame.sprite.Group):
 
     def draw_y_sorted(self):
         for sprite in sorted(self.sprites(),
-                             key=lambda sprite: sprite.rect.centery):
+                             key=lambda sprite: sprite.feet.centery):
             sprite.display()
 
     def update_offset(self):

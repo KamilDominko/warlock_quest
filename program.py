@@ -7,6 +7,7 @@ from camera import Camera
 from enemy import Enemy
 from spawner import Spawner
 from information import Information
+from xp_orb import XpOrb
 
 
 class Program:
@@ -25,8 +26,46 @@ class Program:
         self.startTime = pygame.time.get_ticks()
         self.enemies = pygame.sprite.Group()
         self.spawner = Spawner(self)
+        self.items = pygame.sprite.Group()
         self.information = Information(self)
         self.showInfo = False
+
+    def _dev(self, event):
+        # Num1 spawnuje wroga w miejscach myszki
+        if event.key == pygame.K_KP1:
+            x, y = self.camera.give_mouse()
+            for i in range(1):
+                enemy = Enemy(self, x, y)
+                self.camera.add(enemy)
+                self.enemies.add(enemy)
+        # Num2 wywołuje spawner, tworzy wroga w losowym miejscu
+        if event.key == pygame.K_KP2:
+            x, y = self.spawner.create_enemy()
+            for i in range(1):
+                enemy = Enemy(self, x, y)
+                self.camera.add(enemy)
+                self.enemies.add(enemy)
+        # Num3 zabija wszystkich wrogów
+        if event.key == pygame.K_KP3:
+            print(len(self.enemies))
+            for enemy in self.enemies:
+                enemy.kill()
+        # Num+ zwiększa szybkostrzelność gracza
+        if event.key == pygame.K_KP_PLUS:
+            self.player.attackSpeed += 0.5
+        # Num- zmniejsza szybkostrzelność gracza
+        if event.key == pygame.K_KP_MINUS:
+            self.player.attackSpeed -= 0.5
+        # Num* otwiera statystyki gracza
+        if event.key == pygame.K_KP_MULTIPLY:
+            self.showInfo = not self.showInfo
+            print(self.showInfo)
+        # Num/ pojawia XPorb w miejscu kursora
+        if event.key == pygame.K_KP_DIVIDE:
+            x, y = self.camera.give_mouse()
+            xpOrb = XpOrb(self, x, y)
+            self.items.add(xpOrb)
+            self.camera.add(xpOrb)
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -35,30 +74,7 @@ class Program:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.isRunning = False
-                # DEV spawnuje wroga w miejscach myszki
-                if event.key == pygame.K_KP1:
-                    x, y = self.camera.give_mouse()
-                    for i in range(1):
-                        enemy = Enemy(self, x, y)
-                        self.camera.add(enemy)
-                        self.enemies.add(enemy)
-                if event.key == pygame.K_KP2:
-                    x, y = self.spawner.create_enemy()
-                    for i in range(1):
-                        enemy = Enemy(self, x, y)
-                        self.camera.add(enemy)
-                        self.enemies.add(enemy)
-                if event.key == pygame.K_KP3:
-                    print(len(self.enemies))
-                    for enemy in self.enemies:
-                        enemy.kill()
-                if event.key == pygame.K_KP_PLUS:
-                    self.player.attackSpeed += 0.5
-                if event.key == pygame.K_KP_MINUS:
-                    self.player.attackSpeed -= 0.5
-                if event.key == pygame.K_KP_MULTIPLY:
-                    self.showInfo = not self.showInfo
-                    print(self.showInfo)
+                self._dev(event)
 
             self.player.input(event)
 
@@ -73,6 +89,8 @@ class Program:
         # self.player.display()
         # for enemy in self.enemies:
         #     enemy.display()
+        # for item in self.items:
+        #     item.display()
         self.camera.draw_y_sorted()
         if self.showInfo:
             self.information.display_info()
@@ -80,6 +98,8 @@ class Program:
 
     def run(self):
         while self.isRunning:
+            # pygame.display.set_caption(f"{self.clock.get_fps(): .1f}")
+            # self.delta_time = self.clock.tick()
             self._check_events()
             self._update_entities()
             self._update_screen()
