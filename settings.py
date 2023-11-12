@@ -15,7 +15,7 @@ class Settings:
         self.player_stamina_regen = 3
         self.player_speed = 5
         self.player_sprint = 7
-        self.player_attack_speed = 1.0
+        self.player_attack_speed = 20.0
 
         self.enemy_speed = 1
         self.enemy_health = 100
