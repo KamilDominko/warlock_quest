@@ -8,6 +8,7 @@ from enemy import Enemy
 from spawner import Spawner
 from information import Information
 from xp_orb import XpOrb
+from interface import Interface
 
 
 class Program:
@@ -29,6 +30,7 @@ class Program:
         self.items = pygame.sprite.Group()
         self.information = Information(self)
         self.showInfo = False
+        self.interface = Interface(self)
 
     def _dev(self, event):
         # Num1 spawnuje wroga w miejscach myszki
@@ -94,6 +96,7 @@ class Program:
         self.camera.draw_y_sorted()
         if self.showInfo:
             self.information.display_info()
+        self.interface.display()
         pygame.display.update()
 
     def run(self):
