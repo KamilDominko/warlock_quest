@@ -11,7 +11,7 @@ from xp_orb import XpOrb
 from interface import Interface
 
 
-class Program:
+class Game:
     def __init__(self):
         self.isRunning = True
         self.settings = Settings()
@@ -111,4 +111,4 @@ class Program:
         pygame.quit()
 
 
-Program().run()
+Game().run()

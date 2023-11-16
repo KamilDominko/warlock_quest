@@ -1,5 +1,6 @@
 import pygame
 
+
 class Information:
     pygame.font.init()
 
@@ -44,7 +45,8 @@ class Information:
             ("Regen", f"{self.player.regenHealth}/sec"),
             ("Mana", f"{self.player.currentMana}/{self.player.maxMana}"),
             ("Regen", f"{self.player.regenMana}/sec"),
-            ("Stamina", f"{self.player.currentStamina}/{self.player.maxStamina}"),
+            ("Stamina", f"{int(self.player.currentStamina)}"
+                        f"/{self.player.maxStamina}"),
             ("Regen", f"{self.player.regenStamina}/sec"),
         ], 20, current_y)
 
@@ -56,7 +58,6 @@ class Information:
 
         self.screen.blit(self.window, self.windowRect)
         self.window.fill((90, 10, 20))
-
 
 # import pygame
 #

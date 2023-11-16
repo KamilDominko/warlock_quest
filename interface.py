@@ -6,6 +6,7 @@ class Interface:
 
     def __init__(self, program):
         self.program = program
+        self.player = program.player
         self.image = pygame.image.load(
             "res/graphic/interface/player_interface3.png")
         x = program.screen.get_width() // 2
@@ -17,53 +18,54 @@ class Interface:
     def update(self):
         pass
 
-    def _draw_player_hp(self):
-        player = self.program.player
-        playerMaxHp = player.maxHealth
-        playerCurrentHp = player.currentHealth
-        perCent = playerCurrentHp / playerMaxHp
-        rect = pygame.Rect((0, 0), (240 * perCent, 28))
-        rect.x = self.rect.x + 144
-        rect.y = self.rect.y + 18
-        pygame.draw.rect(self.program.screen, (150, 0, 0), rect)
+    def _draw_exp_bar(self, full=0):
+        rect = pygame.Rect((0, 0), (self.program.settings.get_res()[0], 28))
+        pygame.draw.rect(self.program.screen, (55, 71, 79), rect)
+        perCent = self.player.experience / (self.player.level * 10)
+        if full:
+            rect.w = self.program.settings.get_res()[0]
+        if not full:
+            rect.w = self.program.settings.get_res()[0] * perCent
+        pygame.draw.rect(self.program.screen, (0, 150, 200), rect)
 
-        text = self.font.render(f"{playerCurrentHp} / {playerMaxHp}", True,
+        # text = self.font.render(
+        #     f"LVL: {self.player.level}   EXP: {self.player.experience}/"
+        #     f"{self.player.level * 10}", True, self.color)
+        text = self.font.render(
+            f"LVL : {self.player.level}", True, self.color)
+        rect.w = self.program.settings.get_res()[0]
+        textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
+        self.program.screen.blit(text, textRect)
+
+    def _draw_bar(self, color, index, maxStat, currentStat):
+        perCent = currentStat / maxStat
+        rect = pygame.Rect((self.rect.x + 144, 0),
+                           (240 * perCent, 28))
+        rect.y = self.rect.y + 18 + index * (4 + rect.h)
+        pygame.draw.rect(self.program.screen, color, rect)
+
+        rect.w = 240
+        text = self.font.render(f"{int(currentStat)} / {int(maxStat)}", True,
                                 self.color)
         textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
         self.program.screen.blit(text, textRect)
+
+    def _draw_player_hp(self):
+        self._draw_bar((150, 0, 0), 0, self.player.maxHealth,
+                       self.player.currentHealth)
 
     def _draw_player_mana(self):
-        player = self.program.player
-        playerMaxMana = player.maxMana
-        playerCurrentMana = player.currentMana
-        perCent = playerCurrentMana / playerMaxMana
-        rect = pygame.Rect((0, 0), (240 * perCent, 28))
-        rect.x = self.rect.x + 144
-        rect.y = self.rect.y + 18 + 1 * 4 + rect.h
-        pygame.draw.rect(self.program.screen, (0, 255, 255), rect)
-
-        text = self.font.render(f"{playerCurrentMana} / {playerMaxMana}", True,
-                                self.color)
-        textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
-        self.program.screen.blit(text, textRect)
+        self._draw_bar((0, 255, 255), 1, self.player.maxMana,
+                       self.player.currentMana)
 
     def _draw_player_stamina(self):
-        player = self.program.player
-        playerMaxStamina = player.maxStamina
-        playerCurrentStamina = player.currentStamina
-        perCent = playerCurrentStamina / playerMaxStamina
-        rect = pygame.Rect((0, 0), (240 * perCent, 28))
-        rect.x = self.rect.x + 144
-        rect.y = self.rect.y + 18 + 2 * (4 + rect.h)
-        pygame.draw.rect(self.program.screen, (200, 150, 40), rect)
-
-        text = self.font.render(f"{playerCurrentStamina} / {playerMaxStamina}", True,
-                                self.color)
-        textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
-        self.program.screen.blit(text, textRect)
+        self._draw_bar((200, 150, 40), 2, self.player.maxStamina,
+                       self.player.currentStamina)
 
     def display(self):
         self.program.screen.blit(self.image, self.rect)
         self._draw_player_hp()
         self._draw_player_mana()
         self._draw_player_stamina()
+
+        self._draw_exp_bar()

@@ -13,6 +13,7 @@ class XpOrb(pygame.sprite.Sprite):
         self.sucked = False
         self.suckTime = 0
         self.speed = 10
+        self.value = 1
 
     def suck(self):
         self.sucked = True
@@ -34,8 +35,9 @@ class XpOrb(pygame.sprite.Sprite):
         self.program.camera.camera_draw(self.image, self.rect.topleft)
 
     def _pick_up(self):
-        playerRect = self.program.player.feet
-        if self.rect.colliderect(playerRect):
+        player = self.program.player
+        if self.rect.colliderect(player.feet):
+            player.add_xp(self.value)
             self.kill()
 
     def move_towards(self, target):

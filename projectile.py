@@ -43,8 +43,8 @@ class Projectile(pygame.sprite.Sprite):
     def _enemy_collision(self):
         for enemy in self.program.enemies:
             # Jeżeli rect pocisku dotyka hitbox wroga
-            if self.rect.colliderect(enemy.hitbox) and enemy not in \
-                    self.hited and not enemy.hited:
+            if self.rect.colliderect(enemy.hitbox) and \
+                    enemy not in self.hited and not enemy.hited:
                 self.hited.append(enemy)
                 enemy.deal_damage(self.damage)
                 # enemy.current_healt -= self.damage

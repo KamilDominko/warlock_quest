@@ -22,14 +22,19 @@ class Enemy(pygame.sprite.Sprite):
         self.hited = 0
         self.selected = False
         self.speed = program.settings.enemy_speed
-        self.speed += random.randrange(2)
+        self.speed += (random.randrange(10) / 10)
         self.max_healt = program.settings.enemy_health
         self.current_healt = self.max_healt
-        self.moving_up = 0
-        self.moving_down = 0
-        self.moving_left = 0
-        self.moving_right = 0
-        self.animation_index = 0
+        self.damage = program.settings.enemy_damage
+        self.reload = 0
+        self.attackSpeed = program.settings.enemy_attack_speed
+        self.radius = self.feet.w / 2 + 10
+        # self.radius = math.sqrt((self.feet.w / 2) ** 2 + (self.feet.h / 2)) + 10
+        self._stateUp = 0
+        self._stateDown = 0
+        self._stateLeft = 0
+        self._stateRight = 0
+        self.animationIndex = 0
         self._load_animations()
         self.obstacles = program.map.obstacles
         program.map.obstacles.add(self)
@@ -61,22 +66,22 @@ class Enemy(pygame.sprite.Sprite):
 
     def _check_animation_state(self, state, animation):
         if state:
-            self.animation_index += 0.1
-            if self.animation_index >= len(animation):
-                self.animation_index = 0
-            self.image = animation[int(self.animation_index)]
+            self.animationIndex += 0.1
+            if self.animationIndex >= len(animation):
+                self.animationIndex = 0
+            self.image = animation[int(self.animationIndex)]
 
     def _animation_state(self):
-        if not self.moving_up and not self.moving_down and not \
-                self.moving_left and not self.moving_right:
-            self.animation_index += 0.05
-            if self.animation_index >= len(self.animation_idle):
-                self.animation_index = 0
-            self.image = self.animation_idle[int(self.animation_index)]
-        self._check_animation_state(self.moving_up, self.animation_up)
-        self._check_animation_state(self.moving_down, self.animation_down)
-        self._check_animation_state(self.moving_left, self.animation_left)
-        self._check_animation_state(self.moving_right, self.animation_right)
+        if not self._stateUp and not self._stateDown and not \
+                self._stateLeft and not self._stateRight:
+            self.animationIndex += 0.05
+            if self.animationIndex >= len(self.animation_idle):
+                self.animationIndex = 0
+            self.image = self.animation_idle[int(self.animationIndex)]
+        self._check_animation_state(self._stateUp, self.animation_up)
+        self._check_animation_state(self._stateDown, self.animation_down)
+        self._check_animation_state(self._stateLeft, self.animation_left)
+        self._check_animation_state(self._stateRight, self.animation_right)
 
     # def _move2(self):
     #     _speed = self.speed
@@ -142,6 +147,43 @@ class Enemy(pygame.sprite.Sprite):
     #             elif i == 3:  # Przesuń x o speed w prawo
     #                 self.rect.x += _speed
 
+    def _attack(self, target):
+        target.deal_damage(self.damage)
+
+    def _check_range(self):
+        player = self.program.player
+        if self.rect_circle_collision(player.feet) and not player.hited:
+            if self.reload == 0:
+                self.reload = pygame.time.get_ticks()
+                self._attack(player)
+            if pygame.time.get_ticks() - self.reload > 1000 // self.attackSpeed:
+                self.reload = pygame.time.get_ticks()
+                self._attack(player)
+
+    def rect_circle_collision(self, rect):
+        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty ograniczające
+        bounding_rect = pygame.Rect(self.feet.centerx - self.radius,
+                                    self.feet.bottom - self.radius,
+                                    2 * self.radius, 2 * self.radius)
+
+        if rect.colliderect(bounding_rect):
+            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w odległości nie większej niż promień okręgu od jego centrum
+            for corner in [(rect.left, rect.top),
+                           (rect.right, rect.top),
+                           (rect.left, rect.bottom),
+                           (rect.right, rect.bottom)]:
+                distance = math.sqrt(
+                    (self.feet.centerx - corner[0]) ** 2 + (
+                            self.feet.bottom - corner[1]) ** 2)
+                if distance <= self.radius:
+                    return True
+
+            # # Sprawdź, czy środek okręgu znajduje się w prostokącie
+            # return rect.collidepoint(self.feet.centerx,
+            #                          self.feet.bottom)
+
+        return False
+
     def deal_damage(self, damage):
         self.current_healt -= damage
         self.hited = pygame.time.get_ticks()
@@ -156,38 +198,76 @@ class Enemy(pygame.sprite.Sprite):
         # KYS
         self.kill()
 
+    # def _move(self):
+    #     """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
+    #     przeszkodami, przez które gracz nie może przejść."""
+    #     # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
+    #     speed_x = -self.speed if self.moving_left else self.speed if self.moving_right else 0
+    #     speed_y = -self.speed if self.moving_up else self.speed if self.moving_down else 0
+    #     # Ustal nową pozycję gracza w poziomie i pionie
+    #     new_x = self.feet.x + speed_x
+    #     new_y = self.feet.y + speed_y
+    #     # Utwórz hipotetyczne rect'y dla ruchu w poziomie i pionie
+    #     new_rect_x = self.feet.copy()
+    #     new_rect_x.x = new_x
+    #     new_rect_y = self.feet.copy()
+    #     new_rect_y.y = new_y
+    #     # Spraawdź kolizję hipotetycznych rect'ów
+    #     for obstacle in self.obstacles:
+    #         if obstacle != self:
+    #             # Sprawdza kolizje z przeszkodami w poziomie
+    #             if new_rect_x.colliderect(obstacle.feet):
+    #                 if speed_x > 0:
+    #                     speed_x = 0
+    #                 elif speed_x < 0:
+    #                     speed_x = 0
+    #             # Sprawdza kolizje z przeszkodami w pionie
+    #             if new_rect_y.colliderect(obstacle.feet):
+    #                 if speed_y > 0:
+    #                     speed_y = 0
+    #                 elif speed_y < 0:
+    #                     speed_y = 0
+    #         # Aktualizuje pozycję self.feet
+    #     self.feet.x += speed_x
+    #     self.feet.y += speed_y
+    #     # Aktualizuje pozycję self.rect na podstawie self.feet
+    #     self.rect.midbottom = self.feet.midbottom
+
     def _move(self):
-        """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
-        przeszkodami, przez które gracz nie może przejść."""
+        """Odpowiada za poruszanie się gracza oraz detekcję kolizji z przeszkodami, przez które gracz nie może przejść."""
         # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
-        speed_x = -self.speed if self.moving_left else self.speed if self.moving_right else 0
-        speed_y = -self.speed if self.moving_up else self.speed if self.moving_down else 0
+        speed = pygame.math.Vector2(0, 0)
+        if self._stateLeft:
+            speed.x = -self.speed
+        elif self._stateRight:
+            speed.x = self.speed
+        if self._stateUp:
+            speed.y = -self.speed
+        elif self._stateDown:
+            speed.y = self.speed
+        # Znormalizuj wektor prędkości, aby utrzymać stałą prędkość niezależnie od kierunku
+        if speed.length() > 0:
+            speed = speed.normalize() * self.speed
         # Ustal nową pozycję gracza w poziomie i pionie
-        new_x = self.feet.x + speed_x
-        new_y = self.feet.y + speed_y
+        new_x = self.feet.x + speed.x
+        new_y = self.feet.y + speed.y
         # Utwórz hipotetyczne rect'y dla ruchu w poziomie i pionie
         new_rect_x = self.feet.copy()
         new_rect_x.x = new_x
         new_rect_y = self.feet.copy()
         new_rect_y.y = new_y
-        # Spraawdź kolizję hipotetycznych rect'ów
+        # Sprawdź kolizję hipotetycznych rect'ów
         for obstacle in self.obstacles:
             if obstacle != self:
                 # Sprawdza kolizje z przeszkodami w poziomie
                 if new_rect_x.colliderect(obstacle.feet):
-                    if speed_x > 0:
-                        speed_x = 0
-                    elif speed_x < 0:
-                        speed_x = 0
+                    speed.x = 0
                 # Sprawdza kolizje z przeszkodami w pionie
                 if new_rect_y.colliderect(obstacle.feet):
-                    if speed_y > 0:
-                        speed_y = 0
-                    elif speed_y < 0:
-                        speed_y = 0
-            # Aktualizuje pozycję self.feet
-        self.feet.x += speed_x
-        self.feet.y += speed_y
+                    speed.y = 0
+        # Aktualizuje pozycję self.feet
+        self.feet.x += speed.x
+        self.feet.y += speed.y
         # Aktualizuje pozycję self.rect na podstawie self.feet
         self.rect.midbottom = self.feet.midbottom
 
@@ -213,30 +293,31 @@ class Enemy(pygame.sprite.Sprite):
             if length > self.speed:
                 # Ustaw odpowiednie prędkości w zależności od kierunku
                 if not self.feet.left < self.program.player.feet.right:
-                    self.moving_left = normalized_vector[0] < 0
+                    self._stateLeft = normalized_vector[0] < 0
                 else:
-                    self.moving_left = 0
+                    self._stateLeft = 0
                 if not self.feet.right > self.program.player.feet.left:
-                    self.moving_right = normalized_vector[0] > 0
+                    self._stateRight = normalized_vector[0] > 0
                 else:
-                    self.moving_right = 0
+                    self._stateRight = 0
                 if not self.feet.top < self.program.player.feet.bottom:
-                    self.moving_up = normalized_vector[1] < 0
+                    self._stateUp = normalized_vector[1] < 0
                 else:
-                    self.moving_up = 0
+                    self._stateUp = 0
                 if not self.feet.bottom > self.program.player.feet.top:
-                    self.moving_down = normalized_vector[1] > 0
+                    self._stateDown = normalized_vector[1] > 0
                 else:
-                    self.moving_down = 0
+                    self._stateDown = 0
             else:
                 # Zatrzymaj wroga, gdy jest wystarczająco blisko gracza
-                self.moving_left = False
-                self.moving_right = False
-                self.moving_up = False
-                self.moving_down = False
+                self._stateLeft = False
+                self._stateRight = False
+                self._stateUp = False
+                self._stateDown = False
 
     def update(self):
         self._ai()
+        self._check_range()
         self._animation_state()
         self._move()
         self.feet = self.image.get_rect(width=48, height=16,
