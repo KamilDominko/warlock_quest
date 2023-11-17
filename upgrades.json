@@ -1,0 +1,62 @@
+{
+  "health": {
+    "name": "health",
+    "description": "Increases health",
+    "value": 10
+  },
+  "health_regen": {
+    "name": "health regen",
+    "description": "Increases health regeneration",
+    "value": 0.1
+  },
+  "mana": {
+    "name": "mana",
+    "description": "Increases mana",
+    "value": 10
+  },
+  "mana_regen": {
+    "name": "mana",
+    "description": "Increases mana regeneration",
+    "value": 0.4
+  },
+  "stamina": {
+    "name": "stamina",
+    "description": "Increases stamina",
+    "value": 10
+  },
+  "stamina_regen": {
+    "name": "stamina",
+    "description": "Increases stamina regeneration",
+    "value": 1
+  },
+  "sprint": {
+    "name": "sprint",
+    "description": "Increases sprint speed",
+    "value": 1
+  },
+  "radius": {
+    "name": "radius",
+    "description": "Increases radius range",
+    "value": 15
+  },
+  "piercing": {
+    "name": "piercing",
+    "description": "Increases number of pierced enemies",
+    "value": 1
+  },
+  "projectile_speed": {
+    "name": "projectile speed",
+    "description": "Increases projectile speed",
+    "value": 1
+  },
+  "attack_speed": {
+    "name": "attack speed",
+    "description": "Increases attacks per second",
+    "value": 0.2
+  },
+  "damage": {
+    "name": "damage",
+    "description": "Increases attack damage",
+    "value": 7.5
+  }
+}

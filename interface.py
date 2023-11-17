@@ -21,7 +21,7 @@ class Interface:
     def _draw_exp_bar(self, full=0):
         rect = pygame.Rect((0, 0), (self.program.settings.get_res()[0], 28))
         pygame.draw.rect(self.program.screen, (55, 71, 79), rect)
-        perCent = self.player.stats["experience"] / (self.player.stats['level'] * 10)
+        perCent = self.player.experience / (self.player.level * 10)
         if full:
             rect.w = self.program.settings.get_res()[0]
         if not full:
@@ -32,7 +32,7 @@ class Interface:
         #     f"LVL: {self.player.level}   EXP: {self.player.experience}/"
         #     f"{self.player.level * 10}", True, self.color)
         text = self.font.render(
-            f"LVL : {self.player.stats['level']}", True, self.color)
+            f"LVL : {self.player.level}", True, self.color)
         rect.w = self.program.settings.get_res()[0]
         textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
         self.program.screen.blit(text, textRect)

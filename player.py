@@ -1,8 +1,8 @@
+import os
 import math
 
 import pygame
 
-import os
 from weapon import Weapon
 from upgrade import Upgrade
 
@@ -16,34 +16,29 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.surface.Surface((64, 128))
         self.rect = self.image.get_rect(center=(x, y))
         self.feet = self.image.get_rect(center=self.rect.midbottom,
-                                        width=32, height=32)
-        # self.feet = self.rect.midbottom
-        # self.foot = self.image.get_rect(center=self.rect.midbottom,
-        #                                 width=32, height=32)
-
-        self.stats = {"level": 1,
-                      "experience": 9,
-                      "health": program.settings.player_health,
-                      "health regen": program.settings.player_health_regen,
+                                        width=32, height=16)
+        self.stats = {"health": program.settings.player_health,
+                      "health_regen": program.settings.player_health_regen,
                       "mana": program.settings.player_mana,
-                      "mana regen": program.settings.player_mana_regen,
+                      "mana_regen": program.settings.player_mana_regen,
                       "stamina": program.settings.player_stamina,
-                      "stamina regen": program.settings.player_stamina_regen,
-                      "walk": program.settings.player_speed,
+                      "stamina_regen": program.settings.player_stamina_regen,
                       "sprint": program.settings.player_sprint,
-                      "attack speed": program.settings.player_attack_speed}
-
+                      "attack_speed": program.settings.player_attack_speed,
+                      "radius": program.settings.player_radius}
+        self.level = 1
+        self.experience = 0
+        self.walk = program.settings.player_speed
         self.currentHealth = self.stats["health"]
         self.currentMana = self.stats["mana"]
         self.currentStamina = self.stats["stamina"]
         self.regenTime = 0
-        self.speed = self.stats["walk"]
+        self.speed = self.walk
         self.sprintTime = 0
         self.weapon = Weapon(self, self.program)
         self.reload = 0
         self.attack = 0
         self.isShooting = False
-        self.radius = 200
         self.hited = 0
         self.circleColor = (0, 255, 0)
         self.obstacles = program.map.obstacles
@@ -69,15 +64,15 @@ class Player(pygame.sprite.Sprite):
         self.animation_right = self._load_images(
             "res/graphic/player/player_move_right", "player_move_right", ".png")
 
-    def _load_images(self, folder_path, img_name, file_extension):
+    def _load_images(self, path, img_name, file_extension):
         """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
         argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
         indesu."""
         animation = []
-        files_count = len(os.listdir(folder_path))
+        files_count = len(os.listdir(path))
         for i in range(files_count):
             img = pygame.image.load(
-                f"{folder_path}/{img_name}{i + 1}{file_extension}").convert_alpha()
+                f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
             img = pygame.transform.scale(img, (64, 128))  # SKALUJE
             animation.append(img)
         return animation
@@ -107,92 +102,9 @@ class Player(pygame.sprite.Sprite):
         self._check_animation_state(self._stateLeft, self.animation_left)
         self._check_animation_state(self._stateRight, self.animation_right)
 
-    # def _move(self):
-    #     # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
-    #     speed_x = 0
-    #     speed_y = 0
-    #     if self._state_left:
-    #         speed_x = -self.speed
-    #     elif self._state_right:
-    #         speed_x = self.speed
-    #     if self._state_up:
-    #         speed_y = -self.speed
-    #     elif self._state_down:
-    #         speed_y = self.speed
-    #
-    #     # Ustal nową pozycję gracza w pionie
-    #     new_y = self.feet.y + speed_y
-    #
-    #     # Tworzy nowy rect na podstawie nowych współrzędnych w pionie
-    #     new_rect_y = self.feet.copy()
-    #     new_rect_y.y = new_y
-    #
-    #     # Sprawdza kolizje z przeszkodami w pionie
-    #     for obstacle in self.obstacles:
-    #         if new_rect_y.colliderect(obstacle.rect):
-    #             if speed_y > 0:
-    #                 new_y = obstacle.rect.top - self.feet.height
-    #             elif speed_y < 0:
-    #                 new_y = obstacle.rect.bottom
-    #
-    #     # Ustal nową pozycję gracza w poziomie
-    #     new_x = self.feet.x + speed_x
-    #
-    #     # Tworzy nowy rect na podstawie nowych współrzędnych w poziomie
-    #     new_rect_x = self.feet.copy()
-    #     new_rect_x.x = new_x
-    #
-    #     # Sprawdza kolizje z przeszkodami w poziomie
-    #     for obstacle in self.obstacles:
-    #         if new_rect_x.colliderect(obstacle.rect):
-    #             if speed_x > 0:
-    #                 new_x = obstacle.rect.left - self.feet.width
-    #             elif speed_x < 0:
-    #                 new_x = obstacle.rect.right
-    #
-    #     # Aktualizuje pozycję gracza
-    #     self.feet.x = new_x
-    #     self.feet.y = new_y
-    #     # Aktualizuje pozycję rect'a gracza na podstawie rect'a self.feet
-    #     self.rect.midbottom = self.feet.midbottom
-
-    # def _move(self):
-    #     """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
-    #     przeszkodami, przez które gracz nie może przejść."""
-    #     # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
-    #     speed_x = -self.speed if self._state_left else self.speed if self._state_right else 0
-    #     speed_y = -self.speed if self._state_up else self.speed if self._state_down else 0
-    #     # Ustal nową pozycję gracza w poziomie i pionie
-    #     new_x = self.feet.x + speed_x
-    #     new_y = self.feet.y + speed_y
-    #     # Utwórz hipotetyczne rect'y dla ruchu w poziomie i pionie
-    #     new_rect_x = self.feet.copy()
-    #     new_rect_x.x = new_x
-    #     new_rect_y = self.feet.copy()
-    #     new_rect_y.y = new_y
-    #     # Spraawdź kolizję hipotetycznych rect'ów
-    #     for obstacle in self.obstacles:
-    #         if obstacle != self:
-    #             # Sprawdza kolizje z przeszkodami w poziomie
-    #             if new_rect_x.colliderect(obstacle.feet):
-    #                 if speed_x > 0:
-    #                     speed_x = 0
-    #                 elif speed_x < 0:
-    #                     speed_x = 0
-    #             # Sprawdza kolizje z przeszkodami w pionie
-    #             if new_rect_y.colliderect(obstacle.feet):
-    #                 if speed_y > 0:
-    #                     speed_y = 0
-    #                 elif speed_y < 0:
-    #                     speed_y = 0
-    #     # Aktualizuje pozycję self.feet
-    #     self.feet.x += speed_x
-    #     self.feet.y += speed_y
-    #     # Aktualizuje pozycję self.rect na podstawie self.feet
-    #     self.rect.midbottom = self.feet.midbottom
-
     def _move(self):
-        """Odpowiada za poruszanie się gracza oraz detekcję kolizji z przeszkodami, przez które gracz nie może przejść."""
+        """Odpowiada za poruszanie się gracza oraz detekcję kolizji z
+        przeszkodami, przez które gracz nie może przejść. """
         # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
         speed = pygame.math.Vector2(0, 0)
         if self._stateLeft:
@@ -233,11 +145,10 @@ class Player(pygame.sprite.Sprite):
         if self.reload == 0:
             self.reload = pygame.time.get_ticks()
             self.weapon.shoot()
-        if pygame.time.get_ticks() - self.reload > 1000 // self.stats[
-            "attack speed"]:
+        if pygame.time.get_ticks() - self.reload \
+                > 1000 // self.stats["attack_speed"]:
             self.reload = pygame.time.get_ticks()
             self.weapon.shoot()
-        # self.weapon.shoot()
 
     def _check_if_hited(self):
         if self.hited:
@@ -245,7 +156,7 @@ class Player(pygame.sprite.Sprite):
                 mask = pygame.mask.from_surface(self.image)
                 maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
                                           setcolor=(150, 0, 0, 150))
-                point = self.program.camera.update_point((self.rect.topleft))
+                point = self.program.camera.update_point(self.rect.topleft)
                 self.program.screen.blit(maksSrf, point)
             else:
                 self.hited = 0
@@ -258,17 +169,19 @@ class Player(pygame.sprite.Sprite):
             # GAME OVER
 
     def add_xp(self, amount):
-        self.stats["experience"] += amount
-        if self.stats["experience"] >= 10 * self.stats["level"]:
-            self.stats["level"] += 1
-            self.stats["experience"] = 0
-            Upgrade(self.program).pick()
+        self.experience += amount
+        if self.experience >= 10 * self.level:
+            self.level += 1
+            self.experience = 0
+            upgrade = Upgrade(self.program)
+            upgrade.pick()
+            del upgrade
             self._stateUp = 0
             self._stateDown = 0
             self._stateLeft = 0
             self._stateRight = 0
             self._stateSprint = 0
-            self.speed = self.stats["walk"]
+            self.speed = self.walk
 
     def input(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
@@ -300,7 +213,7 @@ class Player(pygame.sprite.Sprite):
                 self._stateRight = 0
             if event.key == pygame.K_LSHIFT:
                 self._stateSprint = 0
-                self.speed = self.stats["walk"]
+                self.speed = self.walk
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self.isShooting = False
@@ -315,19 +228,19 @@ class Player(pygame.sprite.Sprite):
             if self.currentStamina < 0:
                 self.currentStamina = 0
             self._stateSprint = 0
-            self.speed = self.stats["walk"]
+            self.speed = self.walk
 
     def _regen_health(self):
         if self.currentHealth < self.stats["health"] and not self.hited:
-            self.currentHealth += self.stats["health regen"]
+            self.currentHealth += self.stats["health_regen"]
 
     def _regen_stamina(self):
         if not self._stateSprint or self._stateIdle:
-            if self.currentStamina + self.stats["stamina regen"] > self.stats[
-                "stamina"]:
+            if self.currentStamina + self.stats["stamina_regen"] \
+                    > self.stats["stamina"]:
                 self.currentStamina = self.stats["stamina"]
             else:
-                self.currentStamina += self.stats["stamina regen"]
+                self.currentStamina += self.stats["stamina_regen"]
 
     def _regen(self):
         if pygame.time.get_ticks() - self.regenTime > 100:
@@ -337,17 +250,11 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         self._move()
-        self.feet = self.image.get_rect(width=32, height=16,
-                                        midbottom=self.rect.midbottom)
+        self.feet.midbottom = self.rect.midbottom
         if self.isShooting:
             self._shoot()
-
         self._check_sprint()
         self._regen()
-
-        # self.feet = self.rect.midbottom
-        # self.foot = self.image.get_rect(width=32, height = 32,
-        #                                 midbottom=self.feet)
         self._animation_state()
         center = self.program.camera.update_rect(self.rect)
         self.weapon.update(center.center)
@@ -369,18 +276,20 @@ class Player(pygame.sprite.Sprite):
                 item.suck()
 
     def _rect_circle_collision(self, rect):
-        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty ograniczające
-        bounding_rect = pygame.Rect(self.feet.centerx - self.radius,
-                                    self.feet.bottom - self.radius,
-                                    2 * self.radius, 2 * self.radius)
+        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty
+        bounding_rect = pygame.Rect(self.feet.centerx - self.stats["radius"],
+                                    self.feet.bottom - self.stats["radius"],
+                                    2 * self.stats["radius"],
+                                    2 * self.stats["radius"])
         if rect.colliderect(bounding_rect):
-            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w odległości nie większej niż promień okręgu od jego centrum
+            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w
+            # odległości nie większej niż promień okręgu od jego centrum
             for corner in [(rect.left, rect.top), (rect.right, rect.top),
                            (rect.left, rect.bottom), (rect.right, rect.bottom)]:
                 distance = math.sqrt(
                     (self.feet.centerx - corner[0]) ** 2 + (
                             self.feet.bottom - corner[1]) ** 2)
-                if distance <= self.radius:
+                if distance <= self.stats["radius"]:
                     return True
             # Sprawdź, czy środek okręgu znajduje się w prostokącie
             return rect.collidepoint(self.feet.centerx, self.feet.bottom)
@@ -398,11 +307,10 @@ class Player(pygame.sprite.Sprite):
             self.program.camera.camera_draw(self.image, self.rect.topleft)
         self._check_if_hited()
 
-        DEV = 0
+        DEV = 1
         if DEV:
             self._draw_rect()
             self._draw_feet()
-            # self._draw_foot()
             self._draw_feet_rect()
 
     def _draw_rect(self):
@@ -413,12 +321,8 @@ class Player(pygame.sprite.Sprite):
         feet = self.program.camera.update_point(self.feet.midbottom)
         pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
         pygame.draw.circle(self.program.screen, self.circleColor,
-                           feet, self.radius, 2)
+                           feet, self.stats["radius"], 2)
 
     def _draw_feet_rect(self):
         feet_rect = self.program.camera.update_rect(self.feet)
         pygame.draw.rect(self.program.screen, (0, 0, 255), feet_rect, 3)
-
-    def _draw_foot(self):
-        foot = self.program.camera.update_rect(self.foot)
-        pygame.draw.rect(self.program.screen, (0, 0, 255), foot, 3)

@@ -14,7 +14,7 @@ class Projectile(pygame.sprite.Sprite):
                                              weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        self.speed = weapon.stats["speed"]
+        self.speed = weapon.stats["projectile_speed"]
         self.damage = weapon.stats["damage"]
         self.hits = weapon.stats["piercing"]
         self.hited = []
@@ -47,10 +47,6 @@ class Projectile(pygame.sprite.Sprite):
                     enemy not in self.hited and not enemy.hited:
                 self.hited.append(enemy)
                 enemy.deal_damage(self.damage)
-                # enemy.current_healt -= self.damage
-                # enemy.hited = pygame.time.get_ticks()
-                # if enemy.current_healt < 0:
-                #     enemy.kill()
                 if len(self.hited) == self.hits:
                     self.kill()
                 break

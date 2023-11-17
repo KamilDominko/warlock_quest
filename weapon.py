@@ -18,7 +18,7 @@ class Weapon(pygame.sprite.Sprite):
 
         self.stats = {"damage": program.settings.projectile_damage,
                       "piercing": program.settings.projectile_hits,
-                      "speed": program.settings.projectile_speed}
+                      "projectile_speed": program.settings.projectile_speed}
 
     def _draw_line(self):
         rect = self.program.camera.update_rect(self.rect)

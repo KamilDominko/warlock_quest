@@ -1,5 +1,6 @@
 import pygame
 import random
+import json
 
 
 class Upgrade:
@@ -14,13 +15,19 @@ class Upgrade:
         self.player = program.player
         self.picked = False
         self.optionImage = pygame.image.load(
-            "res/graphic/interface/option.png").convert()
+            "res/graphic/interface/upgrade_options/option.png").convert()
         self.image = pygame.image.load(
             "res/graphic/interface/info.png").convert()
         self.rect = self.image.get_rect(center=self.screen.get_rect().center)
         self.font = pygame.font.Font("res/font/Pixeltype.ttf", 35)
         self.options = []
         self.click = False
+
+        self.upgrades = self._json_upgrades_load()
+
+    def _json_upgrades_load(self):
+        f = open('upgrades.json')
+        return json.load(f)
 
     def update(self):
         for option in self.options:
@@ -33,15 +40,17 @@ class Upgrade:
                 option.selected = False
 
     def _create_options(self):
+        """Tworzy trzy losowe opcje do wyboru."""
+
         for i in range(3):
             x = self.rect.x + i * self.optionImage.get_width() + 2 * 16 + i * 16
             y = self.rect.y + 5 * 16
             subject = random.choice(("player", "weapon"))
             if subject == "player":
-                type = random.choice(("attack_speed", "health"))
+                type = random.choice(list(self.player.stats.keys()))
             elif subject == "weapon":
-                type = random.choice(("damage", "piercing"))
-            self.options.append(Option(subject, type, (x, y)))
+                type = random.choice(list(self.player.weapon.stats.keys()))
+            self.options.append(Option(self.upgrades, subject, type, (x, y)))
 
     def display(self):
         self.screen.blit(self.image, self.rect)
@@ -59,9 +68,9 @@ class Upgrade:
                 if event.type == pygame.QUIT:
                     self.program.isRunning = False
                     self.picked = True
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.picked = True
+                # if event.type == pygame.KEYDOWN:
+                #     if event.key == pygame.K_ESCAPE:
+                #         self.picked = True
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         self.click = True
@@ -75,48 +84,30 @@ class Upgrade:
 
 class Option:
     """Opcja, która daje graczowi ulepszenie."""
-    _options = {"attack_speed": {"name": "attack speed",
-                                 "description": "Increases attacks per second",
-                                 "value": 0.2},
-                "damage": {"name": "damage",
-                           "description": "Increases attack damage",
-                           "value": 7.5},
-                "health": {"name": "health",
-                           "description": "Increases health",
-                           "value": 10},
-                "mana": {"name": "mana",
-                         "description": "Increases mana",
-                         "value": 10},
-                "stamina": {"name": "stamina",
-                            "description": "Increases stamina",
-                            "value": 10},
-                "piercing": {"name": "piercing",
-                             "description": "Increases number of pierced "
-                                            "enemies",
-                             "value": 1},
-                "projectile_speed": {"name": "projectile speed",
-                                     "description": "Increases projectile "
-                                                    "speed",
-                                     "value": 1}}
+    f = open('upgrades.json')
+    upgrades = json.load(f)
+    _options = upgrades
 
-    def __init__(self, subject, option, topleft):
+    def __init__(self, options, subject, stat, topleft):
+        self.options = options
         self.subject = subject
-        self.type = option
+        self.stat = stat
         self.image = pygame.image.load(
-            f"res/graphic/interface/option_{option}.png").convert()
+            f"res/graphic/interface/upgrade_options"
+            f"/option_{stat}.png").convert()
         self.rect = self.image.get_rect(topleft=topleft)
         self.selected = False
         self.bonus = 1
 
     def _draw_text(self, screen, font):
         """Wyświetla nazwę i opis ulepszenia."""
-        text = font.render(f'{Option._options[self.type]["name"].upper()}',
+        text = font.render(f'{self.options[self.stat]["name"].upper()}',
                            True, (0, 0, 0))
         textRect = text.get_rect(centerx=self.rect.centerx,
                                  centery=self.rect.centery + self.rect.centery / 4)
         screen.blit(text, textRect)
-        text2 = font.render(f"{Option._options[self.type]['description']} "
-                            f"by {Option._options[self.type]['value']}",
+        text2 = font.render(f"{self.options[self.stat]['description']} "
+                            f"by {self.options[self.stat]['value']}",
                             True, (0, 0, 0))
         textRect2 = text2.get_rect(centerx=self.rect.centerx, y=textRect.bottom)
         screen.blit(text2, textRect2)
@@ -130,8 +121,6 @@ class Option:
     def add_bonus(self, player):
         """Dodaje bonus, sowjego typu, graczowi."""
         if self.subject == "player":
-            player.stats[Option._options[self.type]["name"]] += \
-                Option._options[self.type]["value"]
+            player.stats[self.stat] += self.options[self.stat]["value"]
         elif self.subject == "weapon":
-            player.weapon.stats[Option._options[self.type]["name"]] += \
-                Option._options[self.type]["value"]
+            player.weapon.stats[self.stat] += self.options[self.stat]["value"]

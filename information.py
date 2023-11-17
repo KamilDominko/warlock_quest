@@ -13,7 +13,8 @@ class Information:
         self.color = program.settings.BLACK
         self.window = pygame.Surface((350, 700))
         self.window.fill((90, 10, 20))
-        self.windowRect = self.window.get_rect(topleft=(111, 111))
+        x = program.screen.get_width() - self.window.get_width()
+        self.windowRect = self.window.get_rect(topleft=(x, 111))
 
     def display_window(self):
         self.screen.blit(self.window, self.windowRect)
@@ -43,18 +44,18 @@ class Information:
         current_y = self.render_section("Player Statistics", [
             ("Health", f"{self.player.currentHealth}/"
                        f"{self.player.stats['health']}"),
-            ("Regen", f"{self.player.stats['health regen']}/sec"),
+            ("Regen", f"{self.player.stats['health_regen']}/sec"),
             (
                 "Mana",
                 f"{self.player.stats['mana']}/{self.player.stats['mana']}"),
-            ("Regen", f"{self.player.stats['mana regen']}/sec"),
+            ("Regen", f"{self.player.stats['mana_regen']}/sec"),
             ("Stamina", f"{int(self.player.currentStamina)}"
                         f"/{self.player.stats['stamina']}"),
-            ("Regen", f"{self.player.stats['stamina regen']}/sec"),
+            ("Regen", f"{self.player.stats['stamina_regen']}/sec"),
         ], 20, current_y)
 
         self.render_section("Weapon Statistics", [
-            ("Attack Speed", self.player.stats["attack speed"]),
+            ("Attack Speed", self.player.stats["attack_speed"]),
             ("Damage", self.weapon.stats["damage"]),
             ("Piercing", self.weapon.stats["piercing"]),
         ], 20, current_y)

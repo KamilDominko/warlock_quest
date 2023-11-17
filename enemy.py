@@ -16,7 +16,7 @@ class Enemy(pygame.sprite.Sprite):
             "res/graphic/enemy/enemy.png").convert_alpha()
         self.rect = self.image.get_rect(center=(centerx, centery))
         self.feet = self.image.get_rect(center=self.rect.midbottom,
-                                        width=32, height=32)
+                                        width=32, height=16)
         self.hitbox = self.image.get_rect(center=self.rect.midbottom,
                                           width=32, height=128)
         self.hited = 0
@@ -28,8 +28,7 @@ class Enemy(pygame.sprite.Sprite):
         self.damage = program.settings.enemy_damage
         self.reload = 0
         self.attackSpeed = program.settings.enemy_attack_speed
-        self.radius = self.feet.w / 2 + 10
-        # self.radius = math.sqrt((self.feet.w / 2) ** 2 + (self.feet.h / 2)) + 10
+        self.radius = math.sqrt((self.feet.w / 2) ** 2 + self.feet.h ** 2) + 1
         self._stateUp = 0
         self._stateDown = 0
         self._stateLeft = 0
@@ -51,15 +50,15 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_right = self._load_images(
             "res/graphic/enemy/enemy_move_right", "enemy_move_right", ".png")
 
-    def _load_images(self, folder_path, img_name, file_extension):
+    def _load_images(self, path, img_name, file_extension):
         """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
         argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
         indesu."""
         animation = []
-        files_count = len(os.listdir(folder_path))
+        files_count = len(os.listdir(path))
         for i in range(files_count):
             img = pygame.image.load(
-                f"{folder_path}/{img_name}{i + 1}{file_extension}").convert_alpha()
+                f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
             img = pygame.transform.scale(img, (64, 128))  # SKALUJE
             animation.append(img)
         return animation
@@ -83,70 +82,6 @@ class Enemy(pygame.sprite.Sprite):
         self._check_animation_state(self._stateLeft, self.animation_left)
         self._check_animation_state(self._stateRight, self.animation_right)
 
-    # def _move2(self):
-    #     _speed = self.speed
-    #     if self._state_up:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y - self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.y -= _speed
-    #     _speed = self.speed
-    #     if self._state_down:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x, self.rect.y + self.speed,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.y += _speed
-    #     _speed = self.speed
-    #     if self._state_left:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x - self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.x -= _speed
-    #     _speed = self.speed
-    #     if self._state_right:
-    #         for obstacle in self.obstacles:
-    #             rect = pygame.Rect(self.rect.x + self.speed, self.rect.y,
-    #                                self.rect.w, self.rect.h)
-    #             if rect.colliderect(obstacle.rect):
-    #                 _speed = 0
-    #                 break
-    #         self.rect.x += _speed
-
-    # def _move(self):
-    #     move_vectors = [pygame.math.Vector2(0, -self.speed),  # Góra
-    #                     pygame.math.Vector2(0, self.speed),  # Dół
-    #                     pygame.math.Vector2(-self.speed, 0),  # Lewo
-    #                     pygame.math.Vector2(self.speed, 0)]  # Prawo
-    #     for i in range(4):
-    #         if (i == 0 and self.moving_up) or (i == 1 and self.moving_down) or (
-    #                 i == 2 and self.moving_left) or (
-    #                 i == 3 and self.moving_right):
-    #             _speed = self.speed
-    #             # Do obecnej pozycji punktu feet dodaje vektor ruchu...
-    #             _feet = self.rect.midbottom + move_vectors[i]
-    #             # ...po czym sprawdza, czy nie spowoduje to kolizji z przeszkodą
-    #             for obstacle in self.obstacles:
-    #                 if obstacle.rect.collidepoint(_feet):
-    #                     _speed = 0
-    #                     break
-    #             if i == 0:  # Przesuń y o speed w górę
-    #                 self.rect.y -= _speed
-    #             elif i == 1:  # Przesuń y o speed w dół
-    #                 self.rect.y += _speed
-    #             elif i == 2:  # Przesuń x o speed w lewo
-    #                 self.rect.x -= _speed
-    #             elif i == 3:  # Przesuń x o speed w prawo
-    #                 self.rect.x += _speed
-
     def _attack(self, target):
         target.deal_damage(self.damage)
 
@@ -161,13 +96,14 @@ class Enemy(pygame.sprite.Sprite):
                 self._attack(player)
 
     def rect_circle_collision(self, rect):
-        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty ograniczające
+        # Sprawdź, czy prostokąt i okrąg mają przecinające się prostokąty
         bounding_rect = pygame.Rect(self.feet.centerx - self.radius,
                                     self.feet.bottom - self.radius,
                                     2 * self.radius, 2 * self.radius)
 
         if rect.colliderect(bounding_rect):
-            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w odległości nie większej niż promień okręgu od jego centrum
+            # Sprawdź, czy którakolwiek krawędź prostokąta znajduje się w
+            # odległości nie większej niż promień okręgu od jego centrum
             for corner in [(rect.left, rect.top),
                            (rect.right, rect.top),
                            (rect.left, rect.bottom),
@@ -177,11 +113,9 @@ class Enemy(pygame.sprite.Sprite):
                             self.feet.bottom - corner[1]) ** 2)
                 if distance <= self.radius:
                     return True
-
             # # Sprawdź, czy środek okręgu znajduje się w prostokącie
             # return rect.collidepoint(self.feet.centerx,
             #                          self.feet.bottom)
-
         return False
 
     def deal_damage(self, damage):
@@ -198,43 +132,9 @@ class Enemy(pygame.sprite.Sprite):
         # KYS
         self.kill()
 
-    # def _move(self):
-    #     """Odpowiada za poruszanie się gracza oraz detekcje kolizji z
-    #     przeszkodami, przez które gracz nie może przejść."""
-    #     # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
-    #     speed_x = -self.speed if self.moving_left else self.speed if self.moving_right else 0
-    #     speed_y = -self.speed if self.moving_up else self.speed if self.moving_down else 0
-    #     # Ustal nową pozycję gracza w poziomie i pionie
-    #     new_x = self.feet.x + speed_x
-    #     new_y = self.feet.y + speed_y
-    #     # Utwórz hipotetyczne rect'y dla ruchu w poziomie i pionie
-    #     new_rect_x = self.feet.copy()
-    #     new_rect_x.x = new_x
-    #     new_rect_y = self.feet.copy()
-    #     new_rect_y.y = new_y
-    #     # Spraawdź kolizję hipotetycznych rect'ów
-    #     for obstacle in self.obstacles:
-    #         if obstacle != self:
-    #             # Sprawdza kolizje z przeszkodami w poziomie
-    #             if new_rect_x.colliderect(obstacle.feet):
-    #                 if speed_x > 0:
-    #                     speed_x = 0
-    #                 elif speed_x < 0:
-    #                     speed_x = 0
-    #             # Sprawdza kolizje z przeszkodami w pionie
-    #             if new_rect_y.colliderect(obstacle.feet):
-    #                 if speed_y > 0:
-    #                     speed_y = 0
-    #                 elif speed_y < 0:
-    #                     speed_y = 0
-    #         # Aktualizuje pozycję self.feet
-    #     self.feet.x += speed_x
-    #     self.feet.y += speed_y
-    #     # Aktualizuje pozycję self.rect na podstawie self.feet
-    #     self.rect.midbottom = self.feet.midbottom
-
     def _move(self):
-        """Odpowiada za poruszanie się gracza oraz detekcję kolizji z przeszkodami, przez które gracz nie może przejść."""
+        """Odpowiada za poruszanie się gracza oraz detekcję kolizji z
+        przeszkodami, przez które gracz nie może przejść. """
         # Inicjalizacja prędkości w pionie i poziomie na podstawie stanów klawiszy
         speed = pygame.math.Vector2(0, 0)
         if self._stateLeft:
@@ -320,10 +220,8 @@ class Enemy(pygame.sprite.Sprite):
         self._check_range()
         self._animation_state()
         self._move()
-        self.feet = self.image.get_rect(width=48, height=16,
-                                        midbottom=self.rect.midbottom)
-        self.hitbox = self.image.get_rect(width=32, height=128,
-                                          midbottom=self.rect.midbottom)
+        self.feet.midbottom = self.rect.midbottom
+        self.hitbox.midbottom = self.rect.midbottom
 
     def _check_if_hited(self):
         if self.hited:
@@ -331,7 +229,7 @@ class Enemy(pygame.sprite.Sprite):
                 mask = pygame.mask.from_surface(self.image)
                 maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
                                           setcolor=(150, 0, 0, 150))
-                point = self.program.camera.update_point((self.rect.topleft))
+                point = self.program.camera.update_point(self.rect.topleft)
                 self.program.screen.blit(maksSrf, point)
             else:
                 self.hited = 0
@@ -341,7 +239,7 @@ class Enemy(pygame.sprite.Sprite):
             mask = pygame.mask.from_surface(self.image)
             maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0),
                                       setcolor=(255, 255, 255, 150))
-            point = self.program.camera.update_point((self.rect.topleft))
+            point = self.program.camera.update_point(self.rect.topleft)
             self.program.screen.blit(maksSrf, point)
 
             self.selected = False
@@ -352,12 +250,19 @@ class Enemy(pygame.sprite.Sprite):
         self._check_if_hited()
         self._check_if_selected()
 
-        DEV = 0
+        DEV = 1
         if DEV:
             self._draw_rect()
             self._draw_feet_rect()
             self._draw_hit_box()
             self._draw_mask()
+            self._draw_feet()
+
+    def _draw_feet(self):
+        feet = self.program.camera.update_point(self.feet.midbottom)
+        pygame.draw.circle(self.program.screen, (0, 0, 255), feet, 3)
+        pygame.draw.circle(self.program.screen, (255, 0, 0),
+                           feet, self.radius, 2)
 
     def _draw_rect(self):
         rect = self.program.camera.update_rect(self.rect)
@@ -376,5 +281,5 @@ class Enemy(pygame.sprite.Sprite):
         maksSrf = mask.to_surface(unsetcolor=(0, 0, 0, 0), setcolor=(150, 0,
                                                                      0, 150))
         # maksSrf.fill((0, 255, 0))
-        point = self.program.camera.update_point((self.rect.topleft))
+        point = self.program.camera.update_point(self.rect.topleft)
         self.program.screen.blit(maksSrf, point)

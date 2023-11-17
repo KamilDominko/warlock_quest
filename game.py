@@ -63,10 +63,11 @@ class Game:
             self.showInfo = not self.showInfo
         # Num/ pojawia XPorb w miejscu kursora
         if event.key == pygame.K_KP_DIVIDE:
-            x, y = self.camera.give_mouse()
-            xpOrb = XpOrb(self, x, y)
-            self.items.add(xpOrb)
-            self.camera.add(xpOrb)
+            for i in range(10):
+                x, y = self.camera.give_mouse()
+                xpOrb = XpOrb(self, x, y)
+                self.items.add(xpOrb)
+                self.camera.add(xpOrb)
 
     def _check_events(self):
         for event in pygame.event.get():
