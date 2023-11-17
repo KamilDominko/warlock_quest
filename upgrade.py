@@ -1,15 +1,11 @@
 import pygame
+import random
 
 
 class Upgrade:
+    """Wyświetla okno wyboru ulepszeń, z trzech losowo wybranych gracz ma
+    wybrać jedno."""
     pygame.font.init()
-    _options = {"attackSpeed": 0.2,
-                "damage": 0.5,
-                "health": 10,
-                "mana": 10,
-                "stamina": 10,
-                "piercing": 1,
-                "projectileSpeed": 1}
 
     def __init__(self, program):
         self.program = program
@@ -40,7 +36,12 @@ class Upgrade:
         for i in range(3):
             x = self.rect.x + i * self.optionImage.get_width() + 2 * 16 + i * 16
             y = self.rect.y + 5 * 16
-            self.options.append(Option("attackSpeed", (x, y)))
+            subject = random.choice(("player", "weapon"))
+            if subject == "player":
+                type = random.choice(("attack_speed", "health"))
+            elif subject == "weapon":
+                type = random.choice(("damage", "piercing"))
+            self.options.append(Option(subject, type, (x, y)))
 
     def display(self):
         self.screen.blit(self.image, self.rect)
@@ -49,6 +50,8 @@ class Upgrade:
         pygame.display.update()
 
     def pick(self):
+        """Wywołuje ulepszenie, gra zostaje 'zatrzymana' do czasu aż gracz
+        wybierze ulepszenie."""
         self._create_options()
         self.program.interface._draw_exp_bar(full=1)
         while not self.picked:
@@ -71,30 +74,33 @@ class Upgrade:
 
 
 class Option:
-    _options = {"attackSpeed": {"name": "Attack Speed",
-                                "description": "Increases attack speed.",
-                                "value": 0.2},
-                "damage": {"name": "Damage",
-                           "description": "Increases attack damage..",
-                           "value": 1},
-                "health": {"name": "Health",
-                           "description": "Increases health.",
+    """Opcja, która daje graczowi ulepszenie."""
+    _options = {"attack_speed": {"name": "attack speed",
+                                 "description": "Increases attacks per second",
+                                 "value": 0.2},
+                "damage": {"name": "damage",
+                           "description": "Increases attack damage",
+                           "value": 7.5},
+                "health": {"name": "health",
+                           "description": "Increases health",
                            "value": 10},
-                "mana": {"name": "Mana",
-                         "description": "Increases mana.",
+                "mana": {"name": "mana",
+                         "description": "Increases mana",
                          "value": 10},
-                "stamina": {"name": "Stamina",
-                            "description": "Increases stamina.",
+                "stamina": {"name": "stamina",
+                            "description": "Increases stamina",
                             "value": 10},
-                "piercing": {"name": "Piercing",
-                             "description": "Piercing through enemies.",
+                "piercing": {"name": "piercing",
+                             "description": "Increases number of pierced "
+                                            "enemies",
                              "value": 1},
-                "projectileSpeed": {"name": "Projectile Speed",
-                                    "description": "Increases projectile "
-                                                   "speed.",
-                                    "value": 1}}
+                "projectile_speed": {"name": "projectile speed",
+                                     "description": "Increases projectile "
+                                                    "speed",
+                                     "value": 1}}
 
-    def __init__(self, option, topleft):
+    def __init__(self, subject, option, topleft):
+        self.subject = subject
         self.type = option
         self.image = pygame.image.load(
             f"res/graphic/interface/option_{option}.png").convert()
@@ -102,23 +108,30 @@ class Option:
         self.selected = False
         self.bonus = 1
 
-    def _draw_title(self, screen, font):
-        text = font.render(f'{Option._options[self.type]["name"]}',
+    def _draw_text(self, screen, font):
+        """Wyświetla nazwę i opis ulepszenia."""
+        text = font.render(f'{Option._options[self.type]["name"].upper()}',
                            True, (0, 0, 0))
-        textRect = text.get_rect(centerx=self.rect.centerx, y=self.rect.centery)
+        textRect = text.get_rect(centerx=self.rect.centerx,
+                                 centery=self.rect.centery + self.rect.centery / 4)
         screen.blit(text, textRect)
-        text2 = font.render(f"{Option._options[self.type]['description']}",
+        text2 = font.render(f"{Option._options[self.type]['description']} "
+                            f"by {Option._options[self.type]['value']}",
                             True, (0, 0, 0))
-        textRect2 = text2.get_rect(x=self.rect.x+32, y=textRect.bottom)
+        textRect2 = text2.get_rect(centerx=self.rect.centerx, y=textRect.bottom)
         screen.blit(text2, textRect2)
 
     def display(self, screen, font):
         screen.blit(self.image, self.rect)
-        self._draw_title(screen, font)
+        self._draw_text(screen, font)
         if self.selected:
             pygame.draw.rect(screen, (0, 151, 167), self.rect, 7)
 
     def add_bonus(self, player):
-        pass
-        # player += 10
-        # player.stats[self.type] += Option._options[self.type]
+        """Dodaje bonus, sowjego typu, graczowi."""
+        if self.subject == "player":
+            player.stats[Option._options[self.type]["name"]] += \
+                Option._options[self.type]["value"]
+        elif self.subject == "weapon":
+            player.weapon.stats[Option._options[self.type]["name"]] += \
+                Option._options[self.type]["value"]

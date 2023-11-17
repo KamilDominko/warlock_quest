@@ -30,26 +30,16 @@ class Player(pygame.sprite.Sprite):
                       "stamina": program.settings.player_stamina,
                       "stamina regen": program.settings.player_stamina_regen,
                       "walk": program.settings.player_speed,
-                      "sprint": program.settings.player_sprint}
+                      "sprint": program.settings.player_sprint,
+                      "attack speed": program.settings.player_attack_speed}
 
-        self.level = 1
-        self.experience = 9
-        self.maxHealth = program.settings.player_health
-        self.currentHealth = self.maxHealth
-        self.regenHealth = program.settings.player_health_regen
-        self.maxMana = program.settings.player_mana
-        self.currentMana = self.maxMana
-        self.regenMana = program.settings.player_mana_regen
-        self.maxStamina = program.settings.player_stamina
-        self.currentStamina = self.maxStamina
-        self.regenStamina = program.settings.player_stamina_regen
+        self.currentHealth = self.stats["health"]
+        self.currentMana = self.stats["mana"]
+        self.currentStamina = self.stats["stamina"]
         self.regenTime = 0
-        self.speed = program.settings.player_speed
-        self.walk = program.settings.player_speed
-        self.sprint = program.settings.player_sprint
+        self.speed = self.stats["walk"]
         self.sprintTime = 0
         self.weapon = Weapon(self, self.program)
-        self.attackSpeed = program.settings.player_attack_speed
         self.reload = 0
         self.attack = 0
         self.isShooting = False
@@ -243,7 +233,8 @@ class Player(pygame.sprite.Sprite):
         if self.reload == 0:
             self.reload = pygame.time.get_ticks()
             self.weapon.shoot()
-        if pygame.time.get_ticks() - self.reload > 1000 // self.attackSpeed:
+        if pygame.time.get_ticks() - self.reload > 1000 // self.stats[
+            "attack speed"]:
             self.reload = pygame.time.get_ticks()
             self.weapon.shoot()
         # self.weapon.shoot()
@@ -267,16 +258,17 @@ class Player(pygame.sprite.Sprite):
             # GAME OVER
 
     def add_xp(self, amount):
-        self.experience += amount
-        if self.experience >= 10 * self.level:
-            self.level += 1
-            self.experience = 0
+        self.stats["experience"] += amount
+        if self.stats["experience"] >= 10 * self.stats["level"]:
+            self.stats["level"] += 1
+            self.stats["experience"] = 0
             Upgrade(self.program).pick()
             self._stateUp = 0
             self._stateDown = 0
             self._stateLeft = 0
             self._stateRight = 0
             self._stateSprint = 0
+            self.speed = self.stats["walk"]
 
     def input(self, event):
         """Funkcja sprawdza input z klawiatury dla gracza."""
@@ -308,14 +300,14 @@ class Player(pygame.sprite.Sprite):
                 self._stateRight = 0
             if event.key == pygame.K_LSHIFT:
                 self._stateSprint = 0
-                self.speed = self.walk
+                self.speed = self.stats["walk"]
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self.isShooting = False
 
     def _check_sprint(self):
         if self._stateSprint and not self._stateIdle and self.currentStamina > 0:
-            self.speed = self.sprint
+            self.speed = self.stats["sprint"]
             if pygame.time.get_ticks() - self.sprintTime > 50:
                 self.currentStamina -= self.program.settings.player_stamina_drain
                 self.sprintTime = pygame.time.get_ticks()
@@ -323,18 +315,19 @@ class Player(pygame.sprite.Sprite):
             if self.currentStamina < 0:
                 self.currentStamina = 0
             self._stateSprint = 0
-            self.speed = self.walk
+            self.speed = self.stats["walk"]
 
     def _regen_health(self):
-        if self.currentHealth < self.maxHealth and not self.hited:
-            self.currentHealth += self.regenHealth
+        if self.currentHealth < self.stats["health"] and not self.hited:
+            self.currentHealth += self.stats["health regen"]
 
     def _regen_stamina(self):
         if not self._stateSprint or self._stateIdle:
-            if self.currentStamina + self.regenStamina > self.maxStamina:
-                self.currentStamina = self.maxStamina
+            if self.currentStamina + self.stats["stamina regen"] > self.stats[
+                "stamina"]:
+                self.currentStamina = self.stats["stamina"]
             else:
-                self.currentStamina += self.regenStamina
+                self.currentStamina += self.stats["stamina regen"]
 
     def _regen(self):
         if pygame.time.get_ticks() - self.regenTime > 100:

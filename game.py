@@ -54,14 +54,13 @@ class Game:
                 enemy.kill()
         # Num+ zwiększa szybkostrzelność gracza
         if event.key == pygame.K_KP_PLUS:
-            self.player.attackSpeed += 0.5
+            self.player.stats["attack speed"] += 0.5
         # Num- zmniejsza szybkostrzelność gracza
         if event.key == pygame.K_KP_MINUS:
-            self.player.attackSpeed -= 0.5
+            self.player.stats["attack speed"] -= 0.5
         # Num* otwiera statystyki gracza
         if event.key == pygame.K_KP_MULTIPLY:
             self.showInfo = not self.showInfo
-            print(self.showInfo)
         # Num/ pojawia XPorb w miejscu kursora
         if event.key == pygame.K_KP_DIVIDE:
             x, y = self.camera.give_mouse()

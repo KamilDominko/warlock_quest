@@ -14,9 +14,9 @@ class Projectile(pygame.sprite.Sprite):
                                              weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        self.speed = weapon.projectileSpeed
-        self.damage = weapon.damage
-        self.hits = weapon.hits
+        self.speed = weapon.stats["speed"]
+        self.damage = weapon.stats["damage"]
+        self.hits = weapon.stats["piercing"]
         self.hited = []
 
         self.x, self.y = self._adjusted_x_y(

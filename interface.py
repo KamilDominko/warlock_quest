@@ -21,7 +21,7 @@ class Interface:
     def _draw_exp_bar(self, full=0):
         rect = pygame.Rect((0, 0), (self.program.settings.get_res()[0], 28))
         pygame.draw.rect(self.program.screen, (55, 71, 79), rect)
-        perCent = self.player.experience / (self.player.level * 10)
+        perCent = self.player.stats["experience"] / (self.player.stats['level'] * 10)
         if full:
             rect.w = self.program.settings.get_res()[0]
         if not full:
@@ -32,7 +32,7 @@ class Interface:
         #     f"LVL: {self.player.level}   EXP: {self.player.experience}/"
         #     f"{self.player.level * 10}", True, self.color)
         text = self.font.render(
-            f"LVL : {self.player.level}", True, self.color)
+            f"LVL : {self.player.stats['level']}", True, self.color)
         rect.w = self.program.settings.get_res()[0]
         textRect = text.get_rect(centerx=rect.centerx, centery=rect.centery)
         self.program.screen.blit(text, textRect)
@@ -51,15 +51,15 @@ class Interface:
         self.program.screen.blit(text, textRect)
 
     def _draw_player_hp(self):
-        self._draw_bar((150, 0, 0), 0, self.player.maxHealth,
+        self._draw_bar((150, 0, 0), 0, self.player.stats["health"],
                        self.player.currentHealth)
 
     def _draw_player_mana(self):
-        self._draw_bar((0, 255, 255), 1, self.player.maxMana,
-                       self.player.currentMana)
+        self._draw_bar((0, 255, 255), 1, self.player.stats["mana"],
+                       self.player.stats["mana"])
 
     def _draw_player_stamina(self):
-        self._draw_bar((200, 150, 40), 2, self.player.maxStamina,
+        self._draw_bar((200, 150, 40), 2, self.player.stats["stamina"],
                        self.player.currentStamina)
 
     def display(self):

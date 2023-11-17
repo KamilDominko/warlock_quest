@@ -13,12 +13,12 @@ class Weapon(pygame.sprite.Sprite):
             "res/graphic/weapons/staff.png").convert_alpha()
         self.image = self._image
         self.rect = self.image.get_rect()
-        self.projectileSpeed = program.settings.projectile_speed
-        self.damage = program.settings.projectile_damage
-        self.hits = program.settings.projectile_hits
         self.projectiles = pygame.sprite.Group()
-        self._projectiles = []
         self.angle = 0
+
+        self.stats = {"damage": program.settings.projectile_damage,
+                      "piercing": program.settings.projectile_hits,
+                      "speed": program.settings.projectile_speed}
 
     def _draw_line(self):
         rect = self.program.camera.update_rect(self.rect)
