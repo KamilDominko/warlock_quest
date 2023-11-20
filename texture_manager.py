@@ -1,0 +1,87 @@
+import os
+
+import pygame
+
+
+class TextureManager:
+    """Klasa, która ładuje potrzebne do działania gry tekstury. """
+
+    def __init__(self, program):
+        self.textures = {}
+        self._load_textures()
+
+        # self._print_loaded_textures()
+
+        print(self.textures["projectiles"])
+
+    def _print_loaded_textures(self):
+        # print(self.textures)
+        for entity in self.textures:
+            print(entity)
+            for anim in self.textures[entity]:
+                print(anim)
+                # for surface in self.textures[entity][anim]:
+                #     print(surface)
+
+    def _load_textures(self):
+        self._load_player()
+        self._load_projectiles()
+        self._load_enemy()
+        self._load_map()
+
+    def load_animations(self, animations, file_name):
+        """Funkcja ładuje obrazy do animacji i dodaje je do głównego słownika
+        animacji. Pobiera dwa argumenty: listę nazw animacji oraz nazwę
+        pliku, którą dodaje."""
+        self.textures[file_name] = {}
+        for animation in animations:
+            path = f"res/graphic/{file_name}/{file_name}_{animation}"
+            animationPack = self._load_images(path, file_name, animation)
+            self.textures[file_name].update({animation: animationPack})
+
+    def _load_images(self, path, img_name, animation, file_extension=".png"):
+        """Funkcja ładująca obrazy do animacji sprite'a. Pobiera trzy
+        argumenty: ścieżkę do folderu z animacją, nazwę animacji BEZ jej
+        indeksu oraz listę z nazwami animacji."""
+        animationPack = []
+        files_count = len(os.listdir(path))
+        for i in range(files_count):
+            img = pygame.image.load(
+                f"{path}/{img_name}_{animation}{i + 1}{file_extension}").convert_alpha()
+            # TODO skaluje gracza, trzeba zmienić grafikę gracza na 2x większą
+            img = pygame.transform.scale(img, (64, 128))
+            animationPack.append(img)
+        return animationPack
+
+    def _load_image(self, path, file_name, file_extension=".png"):
+        """Funkcja ładuje pojedynczy obrazek z podanego w argumencie path
+        folderu znajdującego się w res/graphic/..."""
+        p = f"res/graphic/{path}/{file_name}{file_extension}"
+        image = pygame.image.load(p).convert_alpha()
+        self.textures[path].update({file_name: image})
+
+    def _load_projectiles(self):
+        _projectile = "projectiles"
+        self.textures[_projectile] = {}
+        self._load_image(_projectile, "projectile")
+
+    def _load_map(self):
+        _map = "map"
+        self.textures[_map] = {}
+        self._load_image(_map, "stone_ground")
+        self._load_image(_map, "stone_wall")
+        self._load_image(_map, "stone_wall_n")
+        self._load_image(_map, "stone_wall_s")
+        self._load_image(_map, "stone_wall_w")
+        self._load_image(_map, "stone_wall_e")
+        self._load_image(_map, "stone_wall_inside")
+
+    def _load_player(self):
+        animations = ["idle", "move_up", "move_down", "move_left",
+                      "move_right"]
+        self.load_animations(animations, "player")
+
+    def _load_enemy(self):
+        animations = ["idle", "move_up", "move_down", "move_left",
+                      "move_right"]
+        self.load_animations(animations, "enemy")

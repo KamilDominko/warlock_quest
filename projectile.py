@@ -3,15 +3,15 @@ import math
 
 
 class Projectile(pygame.sprite.Sprite):
-    image = pygame.image.load(
-        "res/graphic/projectiles/projectile.png")
+    # image = pygame.image.load(
+    #     "res/graphic/projectiles/projectile.png")
 
-    def __init__(self, weapon):
+    def __init__(self, program, weapon):
         super().__init__()
-        self.program = weapon.program
-        self.image = Projectile.image.convert_alpha()
-        self.image = pygame.transform.rotate(Projectile.image.convert_alpha(),
-                                             weapon.angle - 90)
+        self.program = program
+        self.tM = program.textureMenager.textures
+        self.image = self.tM["projectiles"]["projectile"]
+        self.image = pygame.transform.rotate(self.image, weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
         self.speed = weapon.stats["projectile_speed"]

@@ -12,6 +12,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, program, centerx, centery):
         super().__init__()
         self.program = program
+        self.tM = program.textureMenager.textures
         self.image = pygame.image.load(
             "res/graphic/enemy/enemy.png").convert_alpha()
         self.rect = self.image.get_rect(center=(centerx, centery))
@@ -34,34 +35,34 @@ class Enemy(pygame.sprite.Sprite):
         self._stateLeft = 0
         self._stateRight = 0
         self.animationIndex = 0
-        self._load_animations()
+        # self._load_animations()
         self.obstacles = program.map.obstacles
         program.map.obstacles.add(self)
 
-    def _load_animations(self):
-        self.animation_idle = self._load_images(
-            "res/graphic/enemy/enemy_idle", "enemy_idle", ".png")
-        self.animation_up = self._load_images(
-            "res/graphic/enemy/enemy_move_up", "enemy_move_up", ".png")
-        self.animation_down = self._load_images(
-            "res/graphic/enemy/enemy_move_down", "enemy_move_down", ".png")
-        self.animation_left = self._load_images(
-            "res/graphic/enemy/enemy_move_left", "enemy_move_left", ".png")
-        self.animation_right = self._load_images(
-            "res/graphic/enemy/enemy_move_right", "enemy_move_right", ".png")
-
-    def _load_images(self, path, img_name, file_extension):
-        """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
-        argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
-        indesu."""
-        animation = []
-        files_count = len(os.listdir(path))
-        for i in range(files_count):
-            img = pygame.image.load(
-                f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
-            img = pygame.transform.scale(img, (64, 128))  # SKALUJE
-            animation.append(img)
-        return animation
+    # def _load_animations(self):
+    #     self.animation_idle = self._load_images(
+    #         "res/graphic/enemy/enemy_idle", "enemy_idle", ".png")
+    #     self.animation_up = self._load_images(
+    #         "res/graphic/enemy/enemy_move_up", "enemy_move_up", ".png")
+    #     self.animation_down = self._load_images(
+    #         "res/graphic/enemy/enemy_move_down", "enemy_move_down", ".png")
+    #     self.animation_left = self._load_images(
+    #         "res/graphic/enemy/enemy_move_left", "enemy_move_left", ".png")
+    #     self.animation_right = self._load_images(
+    #         "res/graphic/enemy/enemy_move_right", "enemy_move_right", ".png")
+    #
+    # def _load_images(self, path, img_name, file_extension):
+    #     """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
+    #     argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
+    #     indesu."""
+    #     animation = []
+    #     files_count = len(os.listdir(path))
+    #     for i in range(files_count):
+    #         img = pygame.image.load(
+    #             f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
+    #         img = pygame.transform.scale(img, (64, 128))  # SKALUJE
+    #         animation.append(img)
+    #     return animation
 
     def _check_animation_state(self, state, animation):
         if state:
@@ -74,13 +75,18 @@ class Enemy(pygame.sprite.Sprite):
         if not self._stateUp and not self._stateDown and not \
                 self._stateLeft and not self._stateRight:
             self.animationIndex += 0.05
-            if self.animationIndex >= len(self.animation_idle):
+            filesAmount = len(self.tM["enemy"]["idle"])
+            if self.animationIndex >= filesAmount:
                 self.animationIndex = 0
-            self.image = self.animation_idle[int(self.animationIndex)]
-        self._check_animation_state(self._stateUp, self.animation_up)
-        self._check_animation_state(self._stateDown, self.animation_down)
-        self._check_animation_state(self._stateLeft, self.animation_left)
-        self._check_animation_state(self._stateRight, self.animation_right)
+            self.image = self.tM["enemy"]["idle"][int(
+                self.animationIndex)]
+        self._check_animation_state(self._stateUp, self.tM["enemy"]["move_up"])
+        self._check_animation_state(self._stateDown,
+                                    self.tM["enemy"]["move_down"])
+        self._check_animation_state(self._stateLeft,
+                                    self.tM["enemy"]["move_left"])
+        self._check_animation_state(self._stateRight,
+                                    self.tM["enemy"]["move_right"])
 
     def _attack(self, target):
         target.deal_damage(self.damage)
@@ -250,7 +256,7 @@ class Enemy(pygame.sprite.Sprite):
         self._check_if_hited()
         self._check_if_selected()
 
-        DEV = 1
+        DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_feet_rect()

@@ -107,60 +107,60 @@ class Map:
     _stone_map_40x20 = stone_map40x20
 
     def __init__(self, program):
-        map = Map._stone_map_40x20
-        self.map = map
+        self.tM = program.textureMenager.textures
+        self.map = Map._stone_map_40x20
         self.width = program.settings.field_size * len(self.map[0])
         self.height = len(self.map) * program.settings.field_size
         self.program = program
 
-        self._load_images()
+        # self._load_images()
 
         self.obstacles = pygame.sprite.Group()  # Dla całej gry
         self._obstacles = []  # Tylko dla tej klasy
-        self._load_obstacles()
+        self._load_obstacles(program)
 
         self.field_size = program.settings.field_size
 
-    def _load_images(self):
-        self.stone_ground_img = pygame.image.load(
-            "res/graphic/ground/stone_ground.png").convert()
-        self.stone_wall_n_img = pygame.image.load(
-            "res/graphic/ground/stone_wall_n.png").convert()
-        self.stone_wall_s_img = pygame.image.load(
-            "res/graphic/ground/stone_wall_s.png").convert()
-        self.stone_wall_w_img = pygame.image.load(
-            "res/graphic/ground/stone_wall_w.png").convert()
-        self.stone_wall_e_img = pygame.image.load(
-            "res/graphic/ground/stone_wall_e.png").convert()
-        self.stone_wall_inside_img = pygame.image.load(
-            "res/graphic/ground/stone_wall_inside.png")
+    # def _load_images(self):
+    #     self.stone_ground_img = pygame.image.load(
+    #         "res/graphic/ground/stone_ground.png").convert()
+    #     self.stone_wall_n_img = pygame.image.load(
+    #         "res/graphic/ground/stone_wall_n.png").convert()
+    #     self.stone_wall_s_img = pygame.image.load(
+    #         "res/graphic/ground/stone_wall_s.png").convert()
+    #     self.stone_wall_w_img = pygame.image.load(
+    #         "res/graphic/ground/stone_wall_w.png").convert()
+    #     self.stone_wall_e_img = pygame.image.load(
+    #         "res/graphic/ground/stone_wall_e.png").convert()
+    #     self.stone_wall_inside_img = pygame.image.load(
+    #         "res/graphic/ground/stone_wall_inside.png")
 
-    def _load_obstacles(self):
+    def _load_obstacles(self, program):
         for i, row in enumerate(self.map):
             for j, field in enumerate(row):
                 if field == "sws":
-                    obstacle = Obstacle(self.program, j, i,
-                                        self.stone_wall_s_img)
+                    obstacle = Obstacle(program, j, i,
+                                        self.tM["map"]["stone_wall_s"])
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
                 if field == "swn":
-                    obstacle = Obstacle(self.program, j, i,
-                                        self.stone_wall_n_img)
+                    obstacle = Obstacle(program, j, i,
+                                        self.tM["map"]["stone_wall_n"])
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
                 if field == "swe":
-                    obstacle = Obstacle(self.program, j, i,
-                                        self.stone_wall_e_img)
+                    obstacle = Obstacle(program, j, i,
+                                        self.tM["map"]["stone_wall_e"])
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
                 if field == "sww":
-                    obstacle = Obstacle(self.program, j, i,
-                                        self.stone_wall_w_img)
+                    obstacle = Obstacle(program, j, i,
+                                        self.tM["map"]["stone_wall_w"])
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
                 if field == "swi":
-                    obstacle = Obstacle(self.program, j, i,
-                                        self.stone_wall_inside_img)
+                    obstacle = Obstacle(program, j, i,
+                                        self.tM["map"]["stone_wall_inside"])
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
 
@@ -170,8 +170,8 @@ class Map:
                 x = j * self.field_size
                 y = i * self.field_size
                 if field == "sdg":
-                    self.program.camera.camera_draw(self.stone_ground_img,
-                                                    (x, y))
+                    self.program.camera.camera_draw(
+                        self.tM["map"]["stone_ground"], (x, y))
                 DEV = 0
                 if DEV:
                     self._draw_grid(x, y)

@@ -11,6 +11,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, program, x=2000, y=2000):
         super().__init__()
         self.program = program
+        self.tM = program.textureMenager
         self.x = x
         self.y = y
         self.image = pygame.surface.Surface((64, 128))
@@ -50,32 +51,32 @@ class Player(pygame.sprite.Sprite):
         self._stateRight = 0
         self._stateSprint = 0
         self.animationIndex = 0
-        self._load_animations()
+        # self._load_animations()
 
-    def _load_animations(self):
-        self.animation_idle = self._load_images(
-            "res/graphic/player/player_idle", "player_idle", ".png")
-        self.animation_up = self._load_images(
-            "res/graphic/player/player_move_up", "player_move_up", ".png")
-        self.animation_down = self._load_images(
-            "res/graphic/player/player_move_down", "player_move_down", ".png")
-        self.animation_left = self._load_images(
-            "res/graphic/player/player_move_left", "player_move_left", ".png")
-        self.animation_right = self._load_images(
-            "res/graphic/player/player_move_right", "player_move_right", ".png")
-
-    def _load_images(self, path, img_name, file_extension):
-        """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
-        argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
-        indesu."""
-        animation = []
-        files_count = len(os.listdir(path))
-        for i in range(files_count):
-            img = pygame.image.load(
-                f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
-            img = pygame.transform.scale(img, (64, 128))  # SKALUJE
-            animation.append(img)
-        return animation
+    # def _load_animations(self):
+    #     self.animation_idle = self._load_images(
+    #         "res/graphic/player/player_idle", "player_idle", ".png")
+    #     self.animation_up = self._load_images(
+    #         "res/graphic/player/player_move_up", "player_move_up", ".png")
+    #     self.animation_down = self._load_images(
+    #         "res/graphic/player/player_move_down", "player_move_down", ".png")
+    #     self.animation_left = self._load_images(
+    #         "res/graphic/player/player_move_left", "player_move_left", ".png")
+    #     self.animation_right = self._load_images(
+    #         "res/graphic/player/player_move_right", "player_move_right", ".png")
+    #
+    # def _load_images(self, path, img_name, file_extension):
+    #     """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
+    #     argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
+    #     indesu."""
+    #     animation = []
+    #     files_count = len(os.listdir(path))
+    #     for i in range(files_count):
+    #         img = pygame.image.load(
+    #             f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
+    #         img = pygame.transform.scale(img, (64, 128))  # SKALUJE
+    #         animation.append(img)
+    #     return animation
 
     def _check_animation_state(self, state, animation):
         if state:
@@ -92,15 +93,21 @@ class Player(pygame.sprite.Sprite):
                 self._stateLeft and not self._stateRight:
             self._stateIdle = 1
             self.animationIndex += 0.05
-            if self.animationIndex >= len(self.animation_idle):
+            filesAmount = len(self.tM.textures["player"]["idle"])
+            if self.animationIndex >= filesAmount:
                 self.animationIndex = 0
-            self.image = self.animation_idle[int(self.animationIndex)]
+            self.image = self.tM.textures["player"]["idle"][
+                int(self.animationIndex)]
         else:
             self._stateIdle = 0
-        self._check_animation_state(self._stateUp, self.animation_up)
-        self._check_animation_state(self._stateDown, self.animation_down)
-        self._check_animation_state(self._stateLeft, self.animation_left)
-        self._check_animation_state(self._stateRight, self.animation_right)
+        self._check_animation_state(self._stateUp, self.tM.textures[
+            "player"]["move_up"])
+        self._check_animation_state(self._stateDown, self.tM.textures[
+            "player"]["move_down"])
+        self._check_animation_state(self._stateLeft, self.tM.textures[
+            "player"]["move_left"])
+        self._check_animation_state(self._stateRight, self.tM.textures[
+            "player"]["move_right"])
 
     def _move(self):
         """Odpowiada za poruszanie się gracza oraz detekcję kolizji z
@@ -307,7 +314,7 @@ class Player(pygame.sprite.Sprite):
             self.program.camera.camera_draw(self.image, self.rect.topleft)
         self._check_if_hited()
 
-        DEV = 1
+        DEV = 0
         if DEV:
             self._draw_rect()
             self._draw_feet()

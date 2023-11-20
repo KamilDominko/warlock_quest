@@ -65,5 +65,5 @@ class Weapon(pygame.sprite.Sprite):
             self._draw_line()
 
     def shoot(self):
-        projectile = Projectile(self)
+        projectile = Projectile(self.program, self)
         self.projectiles.add(projectile)
