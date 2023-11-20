@@ -12,8 +12,6 @@ class TextureManager:
 
         # self._print_loaded_textures()
 
-        print(self.textures["projectiles"])
-
     def _print_loaded_textures(self):
         # print(self.textures)
         for entity in self.textures:
