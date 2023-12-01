@@ -7,7 +7,7 @@ class Projectile(pygame.sprite.Sprite):
         super().__init__()
         self.program = program
         self.weaponOffset = weapon.height // 2
-        self.tM = program.textureMenager.textures
+        self.tM = program.textureManager.textures
         self.image = self.tM["projectiles"]["projectile"]
         self.image = pygame.transform.rotate(self.image, weapon.angle - 90)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,

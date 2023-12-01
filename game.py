@@ -10,6 +10,10 @@ from information import Information
 from xp_orb import XpOrb
 from interface import Interface
 from texture_manager import TextureManager
+from audio_manager import AudioManager
+
+pygame.init()
+pygame.mixer.init()
 
 
 class Game:
@@ -20,7 +24,8 @@ class Game:
         pygame.display.set_caption(self.settings.title)
         icon = pygame.image.load("res/graphic/icon/icon64.png")
         pygame.display.set_icon(icon)
-        self.textureMenager = TextureManager(self)
+        self.textureManager = TextureManager(self)
+        self.audioManager = AudioManager(self)
         self.map = Map(self)
         self.camera = Camera(self)
         self.player = Player(self)

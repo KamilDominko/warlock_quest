@@ -12,8 +12,9 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, program, centerx, centery):
         super().__init__()
         self.program = program
-        self.tM = program.textureMenager.textures
-        self.image = program.textureMenager.textures["enemy"]["idle"][0]
+        self.tM = program.textureManager.textures
+        self.aM = program.audioManager
+        self.image = program.textureManager.textures["enemy"]["idle"][0]
         # self.image = pygame.image.load(
         #     "res/graphic/enemy/enemy.png").convert_alpha()
         self.rect = self.image.get_rect(center=(centerx, centery))
@@ -132,6 +133,7 @@ class Enemy(pygame.sprite.Sprite):
         return False
 
     def deal_damage(self, damage):
+        self.aM.play("hit", 3)
         self.current_healt -= damage
         self.hited = pygame.time.get_ticks()
         if self.current_healt <= 0:

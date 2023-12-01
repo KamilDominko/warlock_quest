@@ -10,7 +10,8 @@ class Weapon(pygame.sprite.Sprite):
         super().__init__()
         self.program = program
         self.player = player
-        self._image = program.textureMenager.textures["weapons"]["staff"]
+        self._image = program.textureManager.textures["weapons"]["staff"]
+        self.aM = program.audioManager
         self.image = self._image
         self.rect = self.image.get_rect()
         self.height = self.rect.h
@@ -76,11 +77,13 @@ class Weapon(pygame.sprite.Sprite):
         if self.reload == 0:
             self.reload = pygame.time.get_ticks()
             projectile = Projectile(self.program, self)
+            self.aM.play("shoot", 1)
             self.projectiles.add(projectile)
         if pygame.time.get_ticks() - self.reload \
                 > 1000 // self.stats["attack_speed"]:
             self.reload = pygame.time.get_ticks()
             projectile = Projectile(self.program, self)
+            self.aM.play("shoot", 1)
             self.projectiles.add(projectile)
 
     def secondary_attack(self):

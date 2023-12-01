@@ -9,7 +9,8 @@ class Laser:
         self.player = weapon.player
         self.offset = weapon.height // 2
         self.weaponOffset = weapon.height // 2
-        self.tM = program.textureMenager.textures
+        self.tM = program.textureManager.textures
+        self.aM = program.audioManager
         self._image = self.tM["lasers"]["laser"][0]
         self.imgH = self._image.get_rect().h
         self.imgW = self._image.get_rect().w
@@ -116,6 +117,7 @@ class Laser:
 
     def update(self):
         if self.player.currentMana > self.cost:
+            self.aM.play("laser", 2)
             self._animation_state(self.casting, self.tM["lasers"]["laser"])
             self._drain_mana()
             self._enemy_collision()
@@ -126,4 +128,5 @@ class Laser:
                 self.reload = pygame.time.get_ticks()
                 self.hited.clear()
         else:
+            self.aM.stop(2)
             self.casting = False

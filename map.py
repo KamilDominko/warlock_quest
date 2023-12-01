@@ -107,7 +107,7 @@ class Map:
     _stone_map_40x20 = stone_map40x20
 
     def __init__(self, program):
-        self.tM = program.textureMenager.textures
+        self.tM = program.textureManager.textures
         self.map = Map._stone_map_40x20
         self.width = program.settings.field_width * len(self.map[0])
         self.height = len(self.map) * program.settings.field_height

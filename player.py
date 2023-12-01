@@ -11,7 +11,8 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, program, x=500, y=500):
         super().__init__()
         self.program = program
-        self.tM = program.textureMenager
+        self.tM = program.textureManager
+        self.aM = program.audioManager
         self.x = x
         self.y = y
         self.image = self.tM.textures["player"]["idle"][0]
@@ -150,6 +151,11 @@ class Player(pygame.sprite.Sprite):
     def add_xp(self, amount):
         self.experience += amount
         if self.experience >= 10 * self.level:
+            self.aM.play("lvlUp", 5)
+            self.aM.stop(1)
+            self.aM.stop(2)
+            self.aM.stop(3)
+            self.aM.stop(4)
             self.level += 1
             self.experience = 0
             upgrade = Upgrade(self.program)
@@ -200,6 +206,7 @@ class Player(pygame.sprite.Sprite):
                 self.secondAttack = False
                 self.weapon.laser.casting = False
                 self.weapon.laser.animationIndex = 0
+                self.aM.stop(2)
 
     def _check_sprint(self):
         if self._stateSprint and not self._stateIdle and self.currentStamina > 0:

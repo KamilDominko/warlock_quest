@@ -33,6 +33,7 @@ class TextureManager:
         self._load_enemy()
         self._load_map()
         self._load_weapon()
+        self._load_xpOrb()
 
     def _load_animations(self, animations, file_name):
         """Funkcja ładuje obrazy do animacji i dodaje je do głównego słownika
@@ -110,3 +111,7 @@ class TextureManager:
     def _load_weapon(self):
         self.textures["weapons"] = {}
         self._load_image("weapons", "staff")
+
+    def _load_xpOrb(self):
+        self.textures["items"] = {}
+        self._load_image("items", "xp_orb")

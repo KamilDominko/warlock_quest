@@ -18,7 +18,7 @@ class Settings:
 
         self.player_health = 100
         self.player_health_regen = 0.1
-        self.player_mana = 200
+        self.player_mana = 150
         self.player_mana_regen = 0.7
         self.player_stamina = 50
         self.player_stamina_regen = 0.5
@@ -37,6 +37,9 @@ class Settings:
         self.projectile_speed = 33
         self.projectile_damage = 35
         self.projectile_hits = 2
+
+        self.soundVolume = 0.15
+        self.musicVolume = 0.3
 
         self.BLACK = (0, 0, 0)
 
