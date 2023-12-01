@@ -22,14 +22,14 @@ class Game:
         pygame.display.set_icon(icon)
         self.textureMenager = TextureManager(self)
         self.map = Map(self)
-        self.player = Player(self)
         self.camera = Camera(self)
+        self.player = Player(self)
         self.camera.add(self.player)
         self.clock = pygame.time.Clock()
         self.startTime = pygame.time.get_ticks()
         self.enemies = pygame.sprite.Group()
         self.spawner = Spawner(self)
-        self.items = pygame.sprite.Group()
+        self.expOrbs = pygame.sprite.Group()
         self.information = Information(self)
         self.showInfo = False
         self.interface = Interface(self)
@@ -45,7 +45,8 @@ class Game:
         # Num2 wywołuje spawner, tworzy wroga w losowym miejscu
         if event.key == pygame.K_KP2:
             x, y = self.spawner.create_enemy()
-            for i in range(1):
+            for i in range(10):
+                x, y = self.spawner.create_enemy()
                 enemy = Enemy(self, x, y)
                 self.camera.add(enemy)
                 self.enemies.add(enemy)
@@ -56,10 +57,10 @@ class Game:
                 enemy.kill()
         # Num+ zwiększa szybkostrzelność gracza
         if event.key == pygame.K_KP_PLUS:
-            self.player.stats["attack speed"] += 0.5
+            self.player.stats["attack_speed"] += 0.5
         # Num- zmniejsza szybkostrzelność gracza
         if event.key == pygame.K_KP_MINUS:
-            self.player.stats["attack speed"] -= 0.5
+            self.player.stats["attack_speed"] -= 0.5
         # Num* otwiera statystyki gracza
         if event.key == pygame.K_KP_MULTIPLY:
             self.showInfo = not self.showInfo
@@ -68,8 +69,8 @@ class Game:
             for i in range(10):
                 x, y = self.camera.give_mouse()
                 xpOrb = XpOrb(self, x, y)
-                self.items.add(xpOrb)
-                self.camera.add(xpOrb)
+                self.expOrbs.add(xpOrb)
+                # self.camera.add(xpOrb)
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -84,6 +85,7 @@ class Game:
 
     def _update_entities(self):
         # self.player.update()
+        self.expOrbs.update()
         self.camera.update()
         self.camera.update_offset()
 
@@ -93,8 +95,8 @@ class Game:
         # self.player.display()
         # for enemy in self.enemies:
         #     enemy.display()
-        # for item in self.items:
-        #     item.display()
+        for xpOrb in self.expOrbs:
+            xpOrb.display()
         self.camera.draw_y_sorted()
         if self.showInfo:
             self.information.display_info()

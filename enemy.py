@@ -13,13 +13,20 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         self.program = program
         self.tM = program.textureMenager.textures
-        self.image = pygame.image.load(
-            "res/graphic/enemy/enemy.png").convert_alpha()
+        self.image = program.textureMenager.textures["enemy"]["idle"][0]
+        # self.image = pygame.image.load(
+        #     "res/graphic/enemy/enemy.png").convert_alpha()
         self.rect = self.image.get_rect(center=(centerx, centery))
+        width = 32
+        height = 16
+        if self.program.settings.scaleX != 1 and \
+                self.program.settings.scaleY != 1:
+            width *= program.settings.scaleX
+            height *= program.settings.scaleY
         self.feet = self.image.get_rect(center=self.rect.midbottom,
-                                        width=32, height=16)
+                                        width=width, height=height)
         self.hitbox = self.image.get_rect(center=self.rect.midbottom,
-                                          width=32, height=128)
+                                          width=width)
         self.hited = 0
         self.selected = False
         self.speed = program.settings.enemy_speed
@@ -133,8 +140,8 @@ class Enemy(pygame.sprite.Sprite):
     def die(self):
         # Stwórz XP orb w miejscu stóp
         xpOrb = XpOrb(self.program, self.feet.centerx, self.feet.centery)
-        self.program.items.add(xpOrb)
-        self.program.camera.add(xpOrb)
+        self.program.expOrbs.add(xpOrb)
+        # self.program.camera.add(xpOrb)
         # KYS
         self.kill()
 

@@ -109,8 +109,8 @@ class Map:
     def __init__(self, program):
         self.tM = program.textureMenager.textures
         self.map = Map._stone_map_40x20
-        self.width = program.settings.field_size * len(self.map[0])
-        self.height = len(self.map) * program.settings.field_size
+        self.width = program.settings.field_width * len(self.map[0])
+        self.height = len(self.map) * program.settings.field_height
         self.program = program
 
         # self._load_images()
@@ -119,7 +119,9 @@ class Map:
         self._obstacles = []  # Tylko dla tej klasy
         self._load_obstacles(program)
 
-        self.field_size = program.settings.field_size
+        self.field_width = program.settings.field_width
+        self.field_height = program.settings.field_height
+        self.surface = self._create_surface()
 
     # def _load_images(self):
     #     self.stone_ground_img = pygame.image.load(
@@ -164,25 +166,40 @@ class Map:
                     self.obstacles.add(obstacle)
                     self._obstacles.append(obstacle)
 
-    def display(self):
+    def _create_surface(self):
+        """Funkcja tworzy powierzchnie i zapełnia ją polami podłogi,
+        czyli takimi, po których można chodzić."""
+        surface = pygame.Surface((self.width, self.height))
         for i, row in enumerate(self.map):
             for j, field in enumerate(row):
-                x = j * self.field_size
-                y = i * self.field_size
                 if field == "sdg":
-                    self.program.camera.camera_draw(
-                        self.tM["map"]["stone_ground"], (x, y))
-                DEV = 0
-                if DEV:
-                    self._draw_grid(x, y)
+                    x = j * self.field_width
+                    y = i * self.field_height
+                    img = self.tM["map"]["stone_ground"]
+                    surface.blit(img, (x, y))
+        return surface
+
+    def display(self):
+        # for i, row in enumerate(self.map):
+        #     for j, field in enumerate(row):
+        #         x = j * self.field_width
+        #         y = i * self.field_height
+        #         if field == "sdg":
+        #             self.program.camera.camera_draw(
+        #                 self.tM["map"]["stone_ground"], (x, y))
+        #         DEV = 0
+        #         if DEV:
+        #             self._draw_grid(x, y)
         # for obstacle in self.obstacles:
         #     obstacle.display()
+        pkt = self.program.camera.update_point((0, 0))
+        self.program.screen.blit(self.surface, pkt)
         for obstacle in self._obstacles:
             obstacle.display()
 
     def _draw_grid(self, x, y):
         _offset = (x, y) - self.program.camera.offset
-        rect = pygame.Rect(_offset, (self.field_size, self.field_size))
+        rect = pygame.Rect(_offset, (self.field_width, self.field_height))
         pygame.draw.rect(self.program.screen, (0, 0, 0), rect, 1)
 
         player_rect = self.program.camera.update_rect(self.program.player.rect)

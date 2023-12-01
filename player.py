@@ -8,16 +8,22 @@ from upgrade import Upgrade
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, program, x=2000, y=2000):
+    def __init__(self, program, x=500, y=500):
         super().__init__()
         self.program = program
         self.tM = program.textureMenager
         self.x = x
         self.y = y
-        self.image = pygame.surface.Surface((64, 128))
+        self.image = self.tM.textures["player"]["idle"][0]
         self.rect = self.image.get_rect(center=(x, y))
+        width = 32
+        height = 16
+        if self.program.settings.scaleX != 1 and \
+                self.program.settings.scaleY != 1:
+            width *= program.settings.scaleX
+            height *= program.settings.scaleY
         self.feet = self.image.get_rect(center=self.rect.midbottom,
-                                        width=32, height=16)
+                                        width=width, height=height)
         self.stats = {"health": program.settings.player_health,
                       "health_regen": program.settings.player_health_regen,
                       "mana": program.settings.player_mana,
@@ -39,7 +45,8 @@ class Player(pygame.sprite.Sprite):
         self.weapon = Weapon(self, self.program)
         self.reload = 0
         self.attack = 0
-        self.isShooting = False
+        self.primaryAttack = False
+        self.secondAttack = False
         self.hited = 0
         self.circleColor = (0, 255, 0)
         self.obstacles = program.map.obstacles
@@ -148,14 +155,14 @@ class Player(pygame.sprite.Sprite):
         # Aktualizuje pozycję self.rect na podstawie self.feet
         self.rect.midbottom = self.feet.midbottom
 
-    def _shoot(self):
-        if self.reload == 0:
-            self.reload = pygame.time.get_ticks()
-            self.weapon.shoot()
-        if pygame.time.get_ticks() - self.reload \
-                > 1000 // self.stats["attack_speed"]:
-            self.reload = pygame.time.get_ticks()
-            self.weapon.shoot()
+    # def _shoot(self):
+    #     if self.reload == 0:
+    #         self.reload = pygame.time.get_ticks()
+    #         self.weapon.primary_attack()
+    #     if pygame.time.get_ticks() - self.reload \
+    #             > 1000 // self.stats["attack_speed"]:
+    #         self.reload = pygame.time.get_ticks()
+    #         self.weapon.primary_attack()
 
     def _check_if_hited(self):
         if self.hited:
@@ -191,7 +198,7 @@ class Player(pygame.sprite.Sprite):
             self.speed = self.walk
 
     def input(self, event):
-        """Funkcja sprawdza input z klawiatury dla gracza."""
+        """Funkcja sprawdza input z klawiatury i myszy dla gracza."""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 self._stateUp = 1
@@ -208,7 +215,11 @@ class Player(pygame.sprite.Sprite):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 # self._shoot()
-                self.isShooting = True
+                self.primaryAttack = True
+            if event.button == 3:
+                self.secondAttack = True
+                self.weapon.laser.animationIndex = 8
+                # self.weapon.laser.casting = True
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w and self._stateUp:
                 self._stateUp = 0
@@ -223,7 +234,12 @@ class Player(pygame.sprite.Sprite):
                 self.speed = self.walk
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
-                self.isShooting = False
+                self.primaryAttack = False
+            if event.button == 3:
+                self.secondAttack = False
+                self.weapon.laser.casting = False
+                self.weapon.laser.animationIndex = 0
+                # self.weapon.laser.casting = False
 
     def _check_sprint(self):
         if self._stateSprint and not self._stateIdle and self.currentStamina > 0:
@@ -258,15 +274,17 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self._move()
         self.feet.midbottom = self.rect.midbottom
-        if self.isShooting:
-            self._shoot()
+        if self.primaryAttack:
+            self.weapon.primary_attack()
+        if self.secondAttack:
+            self.weapon.second_attack()
         self._check_sprint()
         self._regen()
         self._animation_state()
         center = self.program.camera.update_rect(self.rect)
         self.weapon.update(center.center)
         # self._check_circle_range()
-        self._check_items()
+        self._check_xp_orb()
 
     def _check_circle_range(self):
         # koło?
@@ -277,8 +295,8 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.circleColor = (0, 255, 0)
 
-    def _check_items(self):
-        for item in self.program.items:
+    def _check_xp_orb(self):
+        for item in self.program.expOrbs:
             if self._rect_circle_collision(item.rect) and not item.sucked:
                 item.suck()
 

@@ -2,6 +2,7 @@ import pygame
 import math
 
 from projectile import Projectile
+from laser import Laser
 
 
 class Weapon(pygame.sprite.Sprite):
@@ -9,16 +10,21 @@ class Weapon(pygame.sprite.Sprite):
         super().__init__()
         self.program = program
         self.player = player
-        self._image = pygame.image.load(
-            "res/graphic/weapons/staff.png").convert_alpha()
+        self._image = program.textureMenager.textures["weapons"]["staff"]
+        # self._image = pygame.image.load(
+        #     "res/graphic/weapons/staff.png").convert_alpha()
         self.image = self._image
         self.rect = self.image.get_rect()
+        self.height = self.rect.h
         self.projectiles = pygame.sprite.Group()
         self.angle = 0
 
         self.stats = {"damage": program.settings.projectile_damage,
                       "piercing": program.settings.projectile_hits,
-                      "projectile_speed": program.settings.projectile_speed}
+                      "projectile_speed": program.settings.projectile_speed,
+                      "attack_speed":program.settings.weapon_attack_speed}
+        self.reload = 0
+        self.laser = Laser(program, self)
 
     def _draw_line(self):
         rect = self.program.camera.update_rect(self.rect)
@@ -47,6 +53,8 @@ class Weapon(pygame.sprite.Sprite):
     def update(self, player_center):
         if self.projectiles:
             self.projectiles.update()
+        if self.laser.casting:
+            self.laser.update()
         self._rotate_image()
         x = player_center[0]
         y = player_center[1]
@@ -57,6 +65,8 @@ class Weapon(pygame.sprite.Sprite):
     def display(self):
         for projectile in self.projectiles:
             projectile.display()
+        if self.laser.casting:
+            self.laser.display()
         rect = self.program.camera.update_rect(self.rect)
         self.program.screen.blit(self.image, rect)
         DEV = 0
@@ -64,6 +74,20 @@ class Weapon(pygame.sprite.Sprite):
             self._draw_rect()
             self._draw_line()
 
-    def shoot(self):
-        projectile = Projectile(self.program, self)
-        self.projectiles.add(projectile)
+    # def primary_attack(self):
+    #     projectile = Projectile(self.program, self)
+    #     self.projectiles.add(projectile)
+
+    def primary_attack(self):
+        if self.reload == 0:
+            self.reload = pygame.time.get_ticks()
+            projectile = Projectile(self.program, self)
+            self.projectiles.add(projectile)
+        if pygame.time.get_ticks() - self.reload \
+                > 1000 // self.stats["attack_speed"]:
+            self.reload = pygame.time.get_ticks()
+            projectile = Projectile(self.program, self)
+            self.projectiles.add(projectile)
+
+    def second_attack(self):
+        self.laser.casting = True

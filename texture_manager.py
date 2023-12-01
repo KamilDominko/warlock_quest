@@ -7,6 +7,8 @@ class TextureManager:
     """Klasa, która ładuje potrzebne do działania gry tekstury. """
 
     def __init__(self, program):
+        self.program = program
+        self.settings = program.settings
         self.textures = {}
         self._load_textures()
 
@@ -17,15 +19,20 @@ class TextureManager:
         for entity in self.textures:
             print(entity)
             for anim in self.textures[entity]:
-                print(anim)
+                print("\t", anim)
+                # if entity == "lasers":
+                #     for surface in self.textures[entity][anim]:
+                #         print(surface)
                 # for surface in self.textures[entity][anim]:
-                #     print(surface)
+                #     print("\t", "\t", surface)
 
     def _load_textures(self):
         self._load_player()
         self._load_projectiles()
+        self._load_lasers()
         self._load_enemy()
         self._load_map()
+        self._load_weapon()
 
     def load_animations(self, animations, file_name):
         """Funkcja ładuje obrazy do animacji i dodaje je do głównego słownika
@@ -46,8 +53,12 @@ class TextureManager:
         for i in range(files_count):
             img = pygame.image.load(
                 f"{path}/{img_name}_{animation}{i + 1}{file_extension}").convert_alpha()
-            # TODO skaluje gracza, trzeba zmienić grafikę gracza na 2x większą
-            img = pygame.transform.scale(img, (64, 128))
+            if self.program.settings.scaleX != 1 and \
+                    self.program.settings.scaleY != 1:
+                rect = img.get_rect()
+                img = pygame.transform.scale(img,
+                                             (rect.w * self.settings.scaleX,
+                                              rect.h * self.settings.scaleY))
             animationPack.append(img)
         return animationPack
 
@@ -56,12 +67,24 @@ class TextureManager:
         folderu znajdującego się w res/graphic/..."""
         p = f"res/graphic/{path}/{file_name}{file_extension}"
         image = pygame.image.load(p).convert_alpha()
+        if self.program.settings.scaleX != 1 and \
+                self.program.settings.scaleY != 1:
+            rect = image.get_rect()
+            image = pygame.transform.scale(image,
+                                           (rect.w * self.settings.scaleX,
+                                            rect.h * self.settings.scaleY))
         self.textures[path].update({file_name: image})
 
     def _load_projectiles(self):
         _projectile = "projectiles"
         self.textures[_projectile] = {}
         self._load_image(_projectile, "projectile")
+
+    def _load_lasers(self):
+        path = "res/graphic/lasers"
+        self.textures["lasers"] = {}
+        animationPack = self._load_images(path, "magic", "laser")
+        self.textures["lasers"].update({"laser": animationPack})
 
     def _load_map(self):
         _map = "map"
@@ -83,3 +106,7 @@ class TextureManager:
         animations = ["idle", "move_up", "move_down", "move_left",
                       "move_right"]
         self.load_animations(animations, "enemy")
+
+    def _load_weapon(self):
+        self.textures["weapons"] = {}
+        self._load_image("weapons", "staff")

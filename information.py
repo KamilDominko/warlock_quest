@@ -54,10 +54,15 @@ class Information:
             ("Regen", f"{self.player.stats['stamina_regen']}/sec"),
         ], 20, current_y)
 
-        self.render_section("Weapon Statistics", [
+        current_y = self.render_section("Weapon Statistics", [
             ("Attack Speed", self.player.stats["attack_speed"]),
             ("Damage", self.weapon.stats["damage"]),
             ("Piercing", self.weapon.stats["piercing"]),
+        ], 20, current_y)
+
+        self.render_section("DEV", [
+            ("FPS", self.program.clock.get_fps()),
+            ("ENEMIES", len(self.program.enemies))
         ], 20, current_y)
 
         self.screen.blit(self.window, self.windowRect)

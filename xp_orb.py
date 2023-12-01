@@ -29,7 +29,7 @@ class XpOrb(pygame.sprite.Sprite):
                 playerRect = self.program.player.feet
                 speed = 15
                 self.move_opposite(playerRect, speed)
-        self.display()
+        # self.display()
 
     def display(self):
         self.program.camera.camera_draw(self.image, self.rect.topleft)
@@ -58,6 +58,6 @@ class XpOrb(pygame.sprite.Sprite):
         # Jeśli długość wektora jest większa niż 0, znormalizuj go
         if direction.length() > 0:
             direction.normalize_ip()
-        # Przesuń rect w kierunku gracza
+        # Przesuń rect w kierunku przeciwnym do gracza
         self.rect.x -= direction.x * speed
         self.rect.y -= direction.y * speed

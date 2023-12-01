@@ -9,6 +9,7 @@ class Projectile(pygame.sprite.Sprite):
     def __init__(self, program, weapon):
         super().__init__()
         self.program = program
+        self.weaponOffset = weapon.height//2
         self.tM = program.textureMenager.textures
         self.image = self.tM["projectiles"]["projectile"]
         self.image = pygame.transform.rotate(self.image, weapon.angle - 90)
@@ -36,8 +37,11 @@ class Projectile(pygame.sprite.Sprite):
         if distance != 0:
             direction_x /= distance
             direction_y /= distance
-        x = weapon.rect.centerx + direction_x * 64  # 64 to offset spawnopintu
-        y = weapon.rect.centery + direction_y * 64
+        x = weapon.rect.centerx + direction_x * self.weaponOffset
+        y = weapon.rect.centery + direction_y * self.weaponOffset
+
+        # x = weapon.rect.centerx + 38.4  # 64 to offset spawnopintu
+        # y = weapon.rect.centery + -51.2
         return x, y
 
     def _enemy_collision(self):
