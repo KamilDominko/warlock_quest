@@ -56,7 +56,7 @@ class Interface:
 
     def _draw_player_mana(self):
         self._draw_bar((0, 255, 255), 1, self.player.stats["mana"],
-                       self.player.stats["mana"])
+                       self.player.currentMana)
 
     def _draw_player_stamina(self):
         self._draw_bar((200, 150, 40), 2, self.player.stats["stamina"],

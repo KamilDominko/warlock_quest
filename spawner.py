@@ -15,8 +15,6 @@ class Spawner:
         self.scrH = program.screen.get_height()
         self.spawnStart = pygame.time.get_ticks()
         self.spawnTime = 1000
-
-        # self.fs = program.settings.field_size
         self.fsw = program.settings.field_width
         self.fsh = program.settings.field_height
 
@@ -174,10 +172,6 @@ class Spawner:
             # else:
             #     print("XD")
 
-    def create_enemy(self):
-        pos = self._even_better_pick_position()
-        return pos
-
     def _update(self):
         if pygame.time.get_ticks() - self.spawnStart >= self.spawnTime and \
                 len(self.program.enemies) < 300:
@@ -191,6 +185,10 @@ class Spawner:
             enemy = Enemy(self.program, x, y)
             self.program.camera.add(enemy)
             self.program.enemies.add(enemy)
+
+    def create_enemy(self):
+        pos = self._even_better_pick_position()
+        return pos
 
     def update(self):
         # self._update()

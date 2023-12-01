@@ -3,13 +3,10 @@ import math
 
 
 class Projectile(pygame.sprite.Sprite):
-    # image = pygame.image.load(
-    #     "res/graphic/projectiles/projectile.png")
-
     def __init__(self, program, weapon):
         super().__init__()
         self.program = program
-        self.weaponOffset = weapon.height//2
+        self.weaponOffset = weapon.height // 2
         self.tM = program.textureMenager.textures
         self.image = self.tM["projectiles"]["projectile"]
         self.image = pygame.transform.rotate(self.image, weapon.angle - 90)
@@ -39,9 +36,6 @@ class Projectile(pygame.sprite.Sprite):
             direction_y /= distance
         x = weapon.rect.centerx + direction_x * self.weaponOffset
         y = weapon.rect.centery + direction_y * self.weaponOffset
-
-        # x = weapon.rect.centerx + 38.4  # 64 to offset spawnopintu
-        # y = weapon.rect.centery + -51.2
         return x, y
 
     def _enemy_collision(self):
@@ -54,14 +48,6 @@ class Projectile(pygame.sprite.Sprite):
                 if len(self.hited) == self.hits:
                     self.kill()
                 break
-
-    def update(self):
-        self.x += self.dx
-        self.y += self.dy
-        self.rect.centerx = int(self.x)
-        self.rect.centery = int(self.y)
-        self._enemy_collision()
-        self._check_borders()
 
     def _check_borders(self):
         """Jeżeli pocisk wyleci poza mapę, zniszcz go."""
@@ -84,8 +70,15 @@ class Projectile(pygame.sprite.Sprite):
         # if rect.top > self.program.screen.get_height():
         #     self.kill()
 
+    def update(self):
+        self.x += self.dx
+        self.y += self.dy
+        self.rect.centerx = int(self.x)
+        self.rect.centery = int(self.y)
+        self._enemy_collision()
+        self._check_borders()
+
     def display(self):
-        # self.program.camera.camera_draw(self.image,self.rect.topleft)
         rect = self.program.camera.update_rect(self.rect)
         self.program.screen.blit(self.image, rect)
 

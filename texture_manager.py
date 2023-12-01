@@ -34,7 +34,7 @@ class TextureManager:
         self._load_map()
         self._load_weapon()
 
-    def load_animations(self, animations, file_name):
+    def _load_animations(self, animations, file_name):
         """Funkcja ładuje obrazy do animacji i dodaje je do głównego słownika
         animacji. Pobiera dwa argumenty: listę nazw animacji oraz nazwę
         pliku, którą dodaje."""
@@ -100,12 +100,12 @@ class TextureManager:
     def _load_player(self):
         animations = ["idle", "move_up", "move_down", "move_left",
                       "move_right"]
-        self.load_animations(animations, "player")
+        self._load_animations(animations, "player")
 
     def _load_enemy(self):
         animations = ["idle", "move_up", "move_down", "move_left",
                       "move_right"]
-        self.load_animations(animations, "enemy")
+        self._load_animations(animations, "enemy")
 
     def _load_weapon(self):
         self.textures["weapons"] = {}

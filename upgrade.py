@@ -29,16 +29,6 @@ class Upgrade:
         f = open('upgrades.json')
         return json.load(f)
 
-    def update(self):
-        for option in self.options:
-            if option.rect.collidepoint(pygame.mouse.get_pos()):
-                option.selected = True
-                if self.click:
-                    option.add_bonus(self.player)
-                    self.picked = True
-            else:
-                option.selected = False
-
     def _create_options(self):
         """Tworzy trzy losowe opcje do wyboru."""
 
@@ -51,12 +41,6 @@ class Upgrade:
             elif subject == "weapon":
                 type = random.choice(list(self.player.weapon.stats.keys()))
             self.options.append(Option(self.upgrades, subject, type, (x, y)))
-
-    def display(self):
-        self.screen.blit(self.image, self.rect)
-        for option in self.options:
-            option.display(self.screen, self.font)
-        pygame.display.update()
 
     def pick(self):
         """Wywołuje ulepszenie, gra zostaje 'zatrzymana' do czasu aż gracz
@@ -80,6 +64,22 @@ class Upgrade:
 
             self.update()
             self.display()
+
+    def update(self):
+        for option in self.options:
+            if option.rect.collidepoint(pygame.mouse.get_pos()):
+                option.selected = True
+                if self.click:
+                    option.add_bonus(self.player)
+                    self.picked = True
+            else:
+                option.selected = False
+
+    def display(self):
+        self.screen.blit(self.image, self.rect)
+        for option in self.options:
+            option.display(self.screen, self.font)
+        pygame.display.update()
 
 
 class Option:
@@ -112,15 +112,15 @@ class Option:
         textRect2 = text2.get_rect(centerx=self.rect.centerx, y=textRect.bottom)
         screen.blit(text2, textRect2)
 
-    def display(self, screen, font):
-        screen.blit(self.image, self.rect)
-        self._draw_text(screen, font)
-        if self.selected:
-            pygame.draw.rect(screen, (0, 151, 167), self.rect, 7)
-
     def add_bonus(self, player):
         """Dodaje bonus, sowjego typu, graczowi."""
         if self.subject == "player":
             player.stats[self.stat] += self.options[self.stat]["value"]
         elif self.subject == "weapon":
             player.weapon.stats[self.stat] += self.options[self.stat]["value"]
+
+    def display(self, screen, font):
+        screen.blit(self.image, self.rect)
+        self._draw_text(screen, font)
+        if self.selected:
+            pygame.draw.rect(screen, (0, 151, 167), self.rect, 7)

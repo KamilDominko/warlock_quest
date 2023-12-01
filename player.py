@@ -58,32 +58,6 @@ class Player(pygame.sprite.Sprite):
         self._stateRight = 0
         self._stateSprint = 0
         self.animationIndex = 0
-        # self._load_animations()
-
-    # def _load_animations(self):
-    #     self.animation_idle = self._load_images(
-    #         "res/graphic/player/player_idle", "player_idle", ".png")
-    #     self.animation_up = self._load_images(
-    #         "res/graphic/player/player_move_up", "player_move_up", ".png")
-    #     self.animation_down = self._load_images(
-    #         "res/graphic/player/player_move_down", "player_move_down", ".png")
-    #     self.animation_left = self._load_images(
-    #         "res/graphic/player/player_move_left", "player_move_left", ".png")
-    #     self.animation_right = self._load_images(
-    #         "res/graphic/player/player_move_right", "player_move_right", ".png")
-    #
-    # def _load_images(self, path, img_name, file_extension):
-    #     """Funkcja ładująca pbrazy do animacji sprite'a. Pobiera dwa
-    #     argumenty: ścierzkę do folderu z animcja oraz nazwę animacji BEZ jej
-    #     indesu."""
-    #     animation = []
-    #     files_count = len(os.listdir(path))
-    #     for i in range(files_count):
-    #         img = pygame.image.load(
-    #             f"{path}/{img_name}{i + 1}{file_extension}").convert_alpha()
-    #         img = pygame.transform.scale(img, (64, 128))  # SKALUJE
-    #         animation.append(img)
-    #     return animation
 
     def _check_animation_state(self, state, animation):
         if state:
@@ -155,15 +129,6 @@ class Player(pygame.sprite.Sprite):
         # Aktualizuje pozycję self.rect na podstawie self.feet
         self.rect.midbottom = self.feet.midbottom
 
-    # def _shoot(self):
-    #     if self.reload == 0:
-    #         self.reload = pygame.time.get_ticks()
-    #         self.weapon.primary_attack()
-    #     if pygame.time.get_ticks() - self.reload \
-    #             > 1000 // self.stats["attack_speed"]:
-    #         self.reload = pygame.time.get_ticks()
-    #         self.weapon.primary_attack()
-
     def _check_if_hited(self):
         if self.hited:
             if pygame.time.get_ticks() - self.hited < 500:
@@ -210,16 +175,12 @@ class Player(pygame.sprite.Sprite):
                 self._stateRight = 1
             if event.key == pygame.K_LSHIFT:
                 self._stateSprint = 1
-
-                # self.sprintTime = pygame.time.get_ticks()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                # self._shoot()
                 self.primaryAttack = True
             if event.button == 3:
                 self.secondAttack = True
-                self.weapon.laser.animationIndex = 8
-                # self.weapon.laser.casting = True
+                self.weapon.laser.animationIndex = 0
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w and self._stateUp:
                 self._stateUp = 0
@@ -239,7 +200,6 @@ class Player(pygame.sprite.Sprite):
                 self.secondAttack = False
                 self.weapon.laser.casting = False
                 self.weapon.laser.animationIndex = 0
-                # self.weapon.laser.casting = False
 
     def _check_sprint(self):
         if self._stateSprint and not self._stateIdle and self.currentStamina > 0:
@@ -257,6 +217,10 @@ class Player(pygame.sprite.Sprite):
         if self.currentHealth < self.stats["health"] and not self.hited:
             self.currentHealth += self.stats["health_regen"]
 
+    def _regen_mana(self):
+        if self.currentMana < self.stats["mana"]:
+            self.currentMana += self.stats["mana_regen"]
+
     def _regen_stamina(self):
         if not self._stateSprint or self._stateIdle:
             if self.currentStamina + self.stats["stamina_regen"] \
@@ -269,25 +233,11 @@ class Player(pygame.sprite.Sprite):
         if pygame.time.get_ticks() - self.regenTime > 100:
             self.regenTime = pygame.time.get_ticks()
             self._regen_health()
+            self._regen_mana()
             self._regen_stamina()
 
-    def update(self):
-        self._move()
-        self.feet.midbottom = self.rect.midbottom
-        if self.primaryAttack:
-            self.weapon.primary_attack()
-        if self.secondAttack:
-            self.weapon.second_attack()
-        self._check_sprint()
-        self._regen()
-        self._animation_state()
-        center = self.program.camera.update_rect(self.rect)
-        self.weapon.update(center.center)
-        # self._check_circle_range()
-        self._check_xp_orb()
-
     def _check_circle_range(self):
-        # koło?
+        # Podświetla przeciwnika w zasięgu podnoszenia gracza.
         for enemy in self.program.enemies:
             if self._rect_circle_collision(enemy.feet):
                 self.circleColor = (255, 0, 0)
@@ -319,6 +269,22 @@ class Player(pygame.sprite.Sprite):
             # Sprawdź, czy środek okręgu znajduje się w prostokącie
             return rect.collidepoint(self.feet.centerx, self.feet.bottom)
         return False
+
+    def update(self):
+        self._move()
+        self.feet.midbottom = self.rect.midbottom
+        if self.primaryAttack:
+            self.weapon.primary_attack()
+        if self.secondAttack:
+            if self.currentMana > self.weapon.laser.cost * 10:
+                self.weapon.secondary_attack()
+        self._check_sprint()
+        self._regen()
+        self._animation_state()
+        center = self.program.camera.update_rect(self.rect)
+        self.weapon.update(center.center)
+        # self._check_circle_range()
+        self._check_xp_orb()
 
     def display(self):
         if not self._stateUp:

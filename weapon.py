@@ -11,8 +11,6 @@ class Weapon(pygame.sprite.Sprite):
         self.program = program
         self.player = player
         self._image = program.textureMenager.textures["weapons"]["staff"]
-        # self._image = pygame.image.load(
-        #     "res/graphic/weapons/staff.png").convert_alpha()
         self.image = self._image
         self.rect = self.image.get_rect()
         self.height = self.rect.h
@@ -22,7 +20,7 @@ class Weapon(pygame.sprite.Sprite):
         self.stats = {"damage": program.settings.projectile_damage,
                       "piercing": program.settings.projectile_hits,
                       "projectile_speed": program.settings.projectile_speed,
-                      "attack_speed":program.settings.weapon_attack_speed}
+                      "attack_speed": program.settings.weapon_attack_speed}
         self.reload = 0
         self.laser = Laser(program, self)
 
@@ -74,10 +72,6 @@ class Weapon(pygame.sprite.Sprite):
             self._draw_rect()
             self._draw_line()
 
-    # def primary_attack(self):
-    #     projectile = Projectile(self.program, self)
-    #     self.projectiles.add(projectile)
-
     def primary_attack(self):
         if self.reload == 0:
             self.reload = pygame.time.get_ticks()
@@ -89,5 +83,5 @@ class Weapon(pygame.sprite.Sprite):
             projectile = Projectile(self.program, self)
             self.projectiles.add(projectile)
 
-    def second_attack(self):
+    def secondary_attack(self):
         self.laser.casting = True

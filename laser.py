@@ -6,6 +6,7 @@ class Laser:
     def __init__(self, program, weapon):
         self.program = program
         self.weapon = weapon
+        self.player = weapon.player
         self.offset = weapon.height // 2
         self.weaponOffset = weapon.height // 2
         self.tM = program.textureMenager.textures
@@ -16,16 +17,20 @@ class Laser:
         self.image = pygame.transform.rotate(self._image, weapon.angle)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        self.damage = weapon.stats["damage"]
+        # self.damage = weapon.stats["damage"]
+        self.damage = 10
+        self.attack_speed = 3.0
+        self.cost = 2.5
+        self.drainTime = 0
         self.hits = weapon.stats["piercing"]
         self.hited = []
         self.animationIndex = 0
         self.casting = 0
         self.reload = 0
 
-    def _check_animation_state(self, state, animation):
+    def _animation_state(self, state, animation):
         if state:
-            self.animationIndex += 0.35
+            self.animationIndex += 0.45
             if self.animationIndex >= len(animation):
                 self.animationIndex = 0
             self._image = animation[int(self.animationIndex)]
@@ -76,8 +81,10 @@ class Laser:
         for enemy in self.program.enemies:
             # Jeżeli linia przechodzi przez hitbox wroga
             p1, p2 = self._create_line()
-            if enemy.hitbox.clipline(p1, p2) and not enemy.hited:
-                enemy.deal_damage(20)
+            if enemy.hitbox.clipline(p1, p2) and not enemy.hited and enemy \
+                    not in self.hited:
+                self.hited.append(enemy)
+                enemy.deal_damage(self.damage)
 
     def display(self):
         self._prepare_laser()
@@ -102,25 +109,21 @@ class Laser:
         self.rect.centerx = int(self.x)
         self.rect.centery = int(self.y)
 
+    def _drain_mana(self):
+        if pygame.time.get_ticks() - self.drainTime > 100:
+            self.player.currentMana -= self.cost
+            self.drainTime = pygame.time.get_ticks()
+
     def update(self):
-        # self._image = pygame.transform.scale(self._image, (self.width,
-        #                                                    self.imgH))
-        # self.image = pygame.transform.rotate(self._image, self.weapon.angle)
-        # self.rect = self.image.get_rect()
-        # self.x, self.y = self._weapon_tip()
-        # self.rect.centerx = int(self.x)
-        # self.rect.centery = int(self.y)
-        self._check_animation_state(self.casting, self.tM["lasers"]["laser"])
-        # self._prepare_laser()
-
-        # if self.animationIndex >= len(self.tM["lasers"]["laser"]) - 1:
-        #     self._enemy_collision()
-        #     self.animationIndex = 0
-
-        if self.reload == 0:
-            self.reload = pygame.time.get_ticks()
+        if self.player.currentMana > self.cost:
+            self._animation_state(self.casting, self.tM["lasers"]["laser"])
+            self._drain_mana()
             self._enemy_collision()
-        if pygame.time.get_ticks() - self.reload \
-                > 1000 // 4.0:
-            self.reload = pygame.time.get_ticks()
-            self._enemy_collision()
+            if self.reload == 0:
+                self.reload = pygame.time.get_ticks()
+                self.hited.clear()
+            if pygame.time.get_ticks() - self.reload > 1000 // self.attack_speed:
+                self.reload = pygame.time.get_ticks()
+                self.hited.clear()
+        else:
+            self.casting = False

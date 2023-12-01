@@ -113,8 +113,6 @@ class Map:
         self.height = len(self.map) * program.settings.field_height
         self.program = program
 
-        # self._load_images()
-
         self.obstacles = pygame.sprite.Group()  # Dla całej gry
         self._obstacles = []  # Tylko dla tej klasy
         self._load_obstacles(program)
@@ -122,20 +120,6 @@ class Map:
         self.field_width = program.settings.field_width
         self.field_height = program.settings.field_height
         self.surface = self._create_surface()
-
-    # def _load_images(self):
-    #     self.stone_ground_img = pygame.image.load(
-    #         "res/graphic/ground/stone_ground.png").convert()
-    #     self.stone_wall_n_img = pygame.image.load(
-    #         "res/graphic/ground/stone_wall_n.png").convert()
-    #     self.stone_wall_s_img = pygame.image.load(
-    #         "res/graphic/ground/stone_wall_s.png").convert()
-    #     self.stone_wall_w_img = pygame.image.load(
-    #         "res/graphic/ground/stone_wall_w.png").convert()
-    #     self.stone_wall_e_img = pygame.image.load(
-    #         "res/graphic/ground/stone_wall_e.png").convert()
-    #     self.stone_wall_inside_img = pygame.image.load(
-    #         "res/graphic/ground/stone_wall_inside.png")
 
     def _load_obstacles(self, program):
         for i, row in enumerate(self.map):
@@ -180,18 +164,6 @@ class Map:
         return surface
 
     def display(self):
-        # for i, row in enumerate(self.map):
-        #     for j, field in enumerate(row):
-        #         x = j * self.field_width
-        #         y = i * self.field_height
-        #         if field == "sdg":
-        #             self.program.camera.camera_draw(
-        #                 self.tM["map"]["stone_ground"], (x, y))
-        #         DEV = 0
-        #         if DEV:
-        #             self._draw_grid(x, y)
-        # for obstacle in self.obstacles:
-        #     obstacle.display()
         pkt = self.program.camera.update_point((0, 0))
         self.program.screen.blit(self.surface, pkt)
         for obstacle in self._obstacles:

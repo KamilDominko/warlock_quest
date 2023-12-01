@@ -8,6 +8,7 @@ class XpOrb(pygame.sprite.Sprite):
         self.image = pygame.image.load(
             "res/graphic/items/xp-orb.png").convert_alpha()
         # self.image = pygame.transform.scale(self.image, (24,24))
+        # TODO Wgrać XpOrb'a do TextureManager'a.
         self.rect = self.image.get_rect(center=(x, y))
         self.feet = self.rect
         self.sucked = False

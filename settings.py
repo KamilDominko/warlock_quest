@@ -19,7 +19,7 @@ class Settings:
         self.player_health = 100
         self.player_health_regen = 0.1
         self.player_mana = 200
-        self.player_mana_regen = 5
+        self.player_mana_regen = 0.7
         self.player_stamina = 50
         self.player_stamina_regen = 0.5
         self.player_stamina_drain = 0.7
@@ -49,4 +49,3 @@ class Settings:
 
         self.field_width = int(128 * self.scaleX)
         self.field_height = int(128 * self.scaleY)
-        # print(self.field_width, self.field_height)

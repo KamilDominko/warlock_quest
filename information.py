@@ -47,7 +47,7 @@ class Information:
             ("Regen", f"{self.player.stats['health_regen']}/sec"),
             (
                 "Mana",
-                f"{self.player.stats['mana']}/{self.player.stats['mana']}"),
+                f"{self.player.currentMana}/{self.player.stats['mana']}"),
             ("Regen", f"{self.player.stats['mana_regen']}/sec"),
             ("Stamina", f"{int(self.player.currentStamina)}"
                         f"/{self.player.stats['stamina']}"),
