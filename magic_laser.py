@@ -5,7 +5,7 @@ import random
 from weapon_interface import WeaponInterface
 
 
-class DefaultLaser(WeaponInterface):
+class MagicLaser(WeaponInterface):
     WEAPON_ID = "LASER"
 
     def __init__(self, player):

@@ -1,12 +1,11 @@
-import os
 import math
 
 import pygame
 
 from weapon_image import WeaponImage
 from upgrade import Upgrade
-from default_projectile import DefaultProjectile
-from default_laser import DefaultLaser
+from magic_projectile import MagicProjectile
+from magic_laser import MagicLaser
 
 
 class Player(pygame.sprite.Sprite):
@@ -46,8 +45,8 @@ class Player(pygame.sprite.Sprite):
         self.speed = self.walk
         self.sprintTime = 0
         self.weaponImg = WeaponImage(self, self.program)
-        self.defaultProjectile = DefaultProjectile(self)
-        self.defaultLaser = DefaultLaser(self)
+        self.defaultProjectile = MagicProjectile(self)
+        self.defaultLaser = MagicLaser(self)
         self.reload = 0
         self.attack = 0
         self.primaryAttack = False

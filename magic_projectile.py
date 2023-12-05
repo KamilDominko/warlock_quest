@@ -5,7 +5,7 @@ import random
 from weapon_interface import WeaponInterface
 
 
-class DefaultProjectile(WeaponInterface):
+class MagicProjectile(WeaponInterface):
     WEAPON_ID = "PROJECTILE"
 
     def __init__(self, player):
