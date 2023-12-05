@@ -55,8 +55,9 @@ class Information:
         ], 20, current_y)
 
         current_y = self.render_section("Weapon Statistics", [
-            ("Attack Speed", self.player.stats["attack_speed"]),
-            ("Damage", self.weapon.stats["damage"]),
+            ("Attack Speed", self.weapon.stats["attack_speed"]),
+            ("PD", self.weapon.stats["projectile_damage"]),
+            ("LD", self.weapon.stats["laser_damage"]),
             ("Piercing", self.weapon.stats["piercing"]),
         ], 20, current_y)
 

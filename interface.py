@@ -13,7 +13,9 @@ class Interface:
         y = program.screen.get_height()
         self.rect = self.image.get_rect(midbottom=(x, y))
         self.font = pygame.font.Font("res/font/Pixeltype.ttf", 35)
+        self.hitFont = pygame.font.Font("res/font/Pixeltype.ttf", 30)
         self.color = program.settings.BLACK
+        self.hits = []
 
     def update(self):
         pass
@@ -62,6 +64,23 @@ class Interface:
         self._draw_bar((200, 150, 40), 2, self.player.stats["stamina"],
                        self.player.currentStamina)
 
+    def add_hits(self, center, damage, hit_type="normal"):
+        color = "white"
+        if hit_type == "lucky":
+            color = "yellow"
+        elif hit_type == "crit":
+            color = "red"
+        time = pygame.time.get_ticks()
+        alpha = 255
+        hit = [center, damage, color, time, alpha]
+        self.hits.append(hit)
+
+    def _draw_hits(self, center, damage, color, alpha):
+        text = self.hitFont.render(f"{damage}", True, color)
+        text.set_alpha(alpha)
+        textRect = text.get_rect(centerx=center[0], centery=center[1])
+        self.program.screen.blit(text, textRect)
+
     def display(self):
         self.program.screen.blit(self.image, self.rect)
         self._draw_player_hp()
@@ -69,3 +88,18 @@ class Interface:
         self._draw_player_stamina()
 
         self._draw_exp_bar()
+
+        if self.hits:
+            for i in self.hits:
+                center = i[0]
+                center = self.program.camera.update_point(center)
+                damage = i[1]
+                color = i[2]
+                time = i[3]
+                alpha = i[4]
+                if pygame.time.get_ticks() - time <= 400:
+                    self._draw_hits(center, damage, color, alpha)
+                    i[0] = (i[0][0], i[0][1] - 1)
+                    i[4] -= 7
+                else:
+                    self.hits.remove(i)

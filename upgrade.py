@@ -31,16 +31,20 @@ class Upgrade:
 
     def _create_options(self):
         """Tworzy trzy losowe opcje do wyboru."""
-
-        for i in range(3):
+        picked = []
+        while len(picked) != 3:
+            i = len(picked)
             x = self.rect.x + i * self.optionImage.get_width() + 2 * 16 + i * 16
             y = self.rect.y + 5 * 16
-            subject = random.choice(("player", "weapon"))
-            if subject == "player":
-                type = random.choice(list(self.player.stats.keys()))
-            elif subject == "weapon":
-                type = random.choice(list(self.player.weapon.stats.keys()))
-            self.options.append(Option(self.upgrades, subject, type, (x, y)))
+            stat = random.choice(list(self.upgrades.keys()))
+
+            # stat = "projectile_damage"
+            # self.options.append(Option(self.upgrades, stat, (x, y)))
+            # picked.append(stat)
+
+            if stat not in picked:
+                picked.append(stat)
+                self.options.append(Option(self.upgrades, stat, (x, y)))
 
     def pick(self):
         """Wywołuje ulepszenie, gra zostaje 'zatrzymana' do czasu aż gracz
@@ -70,7 +74,7 @@ class Upgrade:
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.selected = True
                 if self.click:
-                    option.add_bonus(self.player)
+                    option.add_bonus(self.player, self.player.weapon)
                     self.picked = True
             else:
                 option.selected = False
@@ -88,9 +92,8 @@ class Option:
     upgrades = json.load(f)
     _options = upgrades
 
-    def __init__(self, options, subject, stat, topleft):
+    def __init__(self, options, stat, topleft):
         self.options = options
-        self.subject = subject
         self.stat = stat
         self.image = pygame.image.load(
             f"res/graphic/interface/upgrade_options"
@@ -112,12 +115,33 @@ class Option:
         textRect2 = text2.get_rect(centerx=self.rect.centerx, y=textRect.bottom)
         screen.blit(text2, textRect2)
 
-    def add_bonus(self, player):
-        """Dodaje bonus, sowjego typu, graczowi."""
-        if self.subject == "player":
-            player.stats[self.stat] += self.options[self.stat]["value"]
-        elif self.subject == "weapon":
-            player.weapon.stats[self.stat] += self.options[self.stat]["value"]
+    # def add_bonus(self, player):
+    #     """Dodaje bonus, sowjego typu, graczowi."""
+    #     if self.subject == "player":
+    #         player.stats[self.stat] += self.options[self.stat]["value"]
+    #     elif self.subject == "weapon":
+    #         player.weapon.stats[self.stat] += self.options[self.stat]["value"]
+
+    def add_bonus(self, player, weapon):
+        """Dodaje bonus graczowi."""
+        upgradeType = self.options[self.stat]["type"]
+        upgradeTarget = self.options[self.stat]["target"]
+        if upgradeTarget == "player":
+            if upgradeType == "stat":
+                player.stats[self.stat] += self.options[self.stat]["value"]
+            elif upgradeType == "dimension":
+                player.stats[self.stat] += self.options[self.stat]["value"]
+                # TODO Dodać skalowanie przez rozdzielczość
+        elif upgradeTarget == "weapon":
+            if upgradeType == "stat":
+                weapon.stats[self.stat] += self.options[self.stat]["value"]
+            elif upgradeType == "range":
+                value = self.options[self.stat]["value"]
+                current = weapon.stats[self.stat]
+                start = int(current.start + value)
+                end = int(current.stop + value)
+                new = range(start, end)
+                weapon.stats.update({self.stat: new})
 
     def display(self, screen, font):
         screen.blit(self.image, self.rect)

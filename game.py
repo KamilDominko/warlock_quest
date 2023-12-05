@@ -50,7 +50,7 @@ class Game:
         # Num2 wywołuje spawner, tworzy wroga w losowym miejscu
         if event.key == pygame.K_KP2:
             x, y = self.spawner.create_enemy()
-            for i in range(10):
+            for i in range(100):
                 x, y = self.spawner.create_enemy()
                 enemy = Enemy(self, x, y)
                 self.camera.add(enemy)
@@ -60,6 +60,12 @@ class Game:
             print(len(self.enemies))
             for enemy in self.enemies:
                 enemy.kill()
+        if event.key == pygame.K_KP4:
+            for expOrb in self.expOrbs:
+                expOrb.suck()
+        if event.key == pygame.K_KP5:
+            for enemy in self.enemies:
+                enemy.die()
         # Num+ zwiększa szybkostrzelność gracza
         if event.key == pygame.K_KP_PLUS:
             self.player.stats["attack_speed"] += 0.5

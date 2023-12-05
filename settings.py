@@ -5,8 +5,8 @@ class Settings:
         self.screen_width = 1920
         self.screen_height = 1080
 
-        # self.screen_width = 2560
-        # self.screen_height = 1440
+        self.screen_width = 2560
+        self.screen_height = 1440
 
         self.title = "Warlock Quest"
         self.fps = 60
@@ -25,7 +25,7 @@ class Settings:
         self.player_stamina_drain = 0.7
         self.player_speed = 4
         self.player_sprint = 7
-        self.player_attack_speed = 3.0
+        self.player_attack_speed = 1.0
         self.player_radius = 100
 
         self.enemy_speed = 1
@@ -33,10 +33,12 @@ class Settings:
         self.enemy_damage = 5
         self.enemy_attack_speed = 1
 
-        self.weapon_attack_speed = 5.0
+        self.weapon_attack_speed = 2.0
         self.projectile_speed = 33
-        self.projectile_damage = 35
+        self.projectile_damage = range(20, 35)
         self.projectile_hits = 2
+        self.laser_damage = range(15, 25)
+        self.laser_range = 400
 
         self.soundVolume = 0.15
         self.musicVolume = 0.3

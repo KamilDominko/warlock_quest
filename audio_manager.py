@@ -18,15 +18,13 @@ class AudioManager:
         self.sounds = {}
         self._load_audios()
 
-        print(self.sounds)
-
     def _load_audios(self):
         sV = self.settings.soundVolume
         self._load_audio("sounds", "hit", sV)
         self._load_audio("sounds", "lvlUp", sV)
-        self._load_audio("sounds", "xpOrb", sV)
-        self._load_audio("sounds", "shoot", sV / 3)
-        self._load_audio("sounds", "laser", sV / 3)
+        self._load_audio("sounds", "xpOrb", sV * 0.33)
+        self._load_audio("sounds", "shoot", sV * 0.4)
+        self._load_audio("sounds", "laser", sV * 0.5)
 
     def _load_file(self, folder, file_name, volume, file_extension=".wav"):
         _name = file_name

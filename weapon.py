@@ -2,6 +2,7 @@ import pygame
 import math
 
 from projectile import Projectile
+from new_projectile import NewProjectile
 from laser import Laser
 
 
@@ -18,10 +19,12 @@ class Weapon(pygame.sprite.Sprite):
         self.projectiles = pygame.sprite.Group()
         self.angle = 0
 
-        self.stats = {"damage": program.settings.projectile_damage,
-                      "piercing": program.settings.projectile_hits,
+        self.stats = {"projectile_damage": program.settings.projectile_damage,
                       "projectile_speed": program.settings.projectile_speed,
-                      "attack_speed": program.settings.weapon_attack_speed}
+                      "piercing": program.settings.projectile_hits,
+                      "attack_speed": program.settings.weapon_attack_speed,
+                      "laser_damage": program.settings.laser_damage,
+                      "laser_range": program.settings.laser_range}
         self.reload = 0
         self.laser = Laser(program, self)
 
@@ -77,12 +80,14 @@ class Weapon(pygame.sprite.Sprite):
         if self.reload == 0:
             self.reload = pygame.time.get_ticks()
             projectile = Projectile(self.program, self)
+            # projectile = NewProjectile(self.program)
             self.aM.play("shoot", 1)
             self.projectiles.add(projectile)
         if pygame.time.get_ticks() - self.reload \
                 > 1000 // self.stats["attack_speed"]:
             self.reload = pygame.time.get_ticks()
             projectile = Projectile(self.program, self)
+            # projectile = NewProjectile(self)
             self.aM.play("shoot", 1)
             self.projectiles.add(projectile)
 

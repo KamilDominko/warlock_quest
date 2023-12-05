@@ -1,62 +1,100 @@
 {
   "health": {
+    "type": "stat",
+    "target": "player",
     "name": "health",
     "description": "Increases health",
     "value": 10
   },
   "health_regen": {
+    "type": "stat",
+    "target": "player",
     "name": "health regen",
     "description": "Increases health regeneration",
     "value": 0.1
   },
   "mana": {
+    "type": "stat",
+    "target": "player",
     "name": "mana",
     "description": "Increases mana",
     "value": 10
   },
   "mana_regen": {
+    "type": "stat",
+    "target": "player",
     "name": "mana",
     "description": "Increases mana regeneration",
-    "value": 0.1
+    "value": 0.15
   },
   "stamina": {
+    "type": "stat",
+    "target": "player",
     "name": "stamina",
     "description": "Increases stamina",
     "value": 10
   },
   "stamina_regen": {
+    "type": "stat",
+    "target": "player",
     "name": "stamina",
     "description": "Increases stamina regeneration",
     "value": 1
   },
   "sprint": {
+    "type": "stat",
+    "target": "player",
     "name": "sprint",
     "description": "Increases sprint speed",
     "value": 1
   },
   "radius": {
+    "type": "dimension",
+    "target": "player",
     "name": "radius",
     "description": "Increases radius range",
     "value": 15
   },
   "piercing": {
+    "type": "stat",
+    "target": "weapon",
     "name": "piercing",
     "description": "Increases number of pierced enemies",
     "value": 1
   },
   "projectile_speed": {
+    "type": "stat",
+    "target": "weapon",
     "name": "projectile speed",
     "description": "Increases projectile speed",
     "value": 1
   },
   "attack_speed": {
+    "type": "stat",
+    "target": "weapon",
     "name": "attack speed",
     "description": "Increases attacks per second",
-    "value": 0.2
+    "value": 0.5
   },
-  "damage": {
-    "name": "damage",
-    "description": "Increases attack damage",
+  "projectile_damage": {
+    "type": "range",
+    "target": "weapon",
+    "name": "projectile damage",
+    "description": "Increases projectile damage",
+    "value": 5.0
+  },
+  "laser_damage": {
+    "type": "range",
+    "target": "weapon",
+    "name": "laser damage",
+    "description": "Increases laser damage",
     "value": 7.5
+  },
+  "laser_range": {
+    "type": "stat",
+    "target": "weapon",
+    "name": "laser range",
+    "description": "Increases laser range",
+    "value": 100
   }
 }

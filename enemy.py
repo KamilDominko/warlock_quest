@@ -134,6 +134,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def deal_damage(self, damage):
         self.aM.play("hit", 3)
+        self.program.interface.add_hits(self.rect.midtop, damage)
         self.current_healt -= damage
         self.hited = pygame.time.get_ticks()
         if self.current_healt <= 0:

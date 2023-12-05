@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 
 class Laser:
@@ -13,17 +14,14 @@ class Laser:
         self.aM = program.audioManager
         self._image = self.tM["lasers"]["laser"][0]
         self.imgH = self._image.get_rect().h
-        self.imgW = self._image.get_rect().w
-        self.width = 600
+        self.imgW = self._image.get_rect()
+        self.range = weapon.stats["laser_range"]
         self.image = pygame.transform.rotate(self._image, weapon.angle)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
-        # self.damage = weapon.stats["damage"]
-        self.damage = 10
         self.attack_speed = 3.0
         self.cost = 2.5
         self.drainTime = 0
-        self.hits = weapon.stats["piercing"]
         self.hited = []
         self.animationIndex = 0
         self.casting = 0
@@ -45,7 +43,7 @@ class Laser:
         if distance != 0:
             direction_x /= distance
             direction_y /= distance
-        width = self.width * self.program.settings.scaleX
+        width = self.weapon.stats["laser_range"] * self.program.settings.scaleX
         x = self.weapon.rect.centerx + direction_x * (
                 width / 2 + self.weaponOffset)
         y = self.weapon.rect.centery + direction_y * (
@@ -69,7 +67,8 @@ class Laser:
         if distance != 0:
             direction_x /= distance
             direction_y /= distance
-        width = (self.width + self.weaponOffset) * self.program.settings.scaleX
+        width = (self.weapon.stats[
+                     "laser_range"] + self.weaponOffset) * self.program.settings.scaleX
         x = self.weapon.rect.centerx + direction_x * width
         y = self.weapon.rect.centery + direction_y * width
 
@@ -85,7 +84,8 @@ class Laser:
             if enemy.hitbox.clipline(p1, p2) and not enemy.hited and enemy \
                     not in self.hited:
                 self.hited.append(enemy)
-                enemy.deal_damage(self.damage)
+                damage = random.choice(self.weapon.stats["laser_damage"])
+                enemy.deal_damage(damage)
 
     def display(self):
         self._prepare_laser()
@@ -99,7 +99,8 @@ class Laser:
     def _prepare_laser(self):
         # Zmień rozmiar wartość width lasera na wartość statystyki
         self._image = pygame.transform.scale(self._image, (
-            self.width * self.program.settings.scaleX, self.imgH))
+            self.weapon.stats["laser_range"] * self.program.settings.scaleX,
+            self.imgH))
         # Obróć laser w stronę kursora
         self.image = pygame.transform.rotate(self._image, self.weapon.angle)
         # Weź nowy rect

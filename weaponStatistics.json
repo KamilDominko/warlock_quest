@@ -1,0 +1,15 @@
+{
+  "PROJECTILE": {
+    "damage": [20, 35],
+    "speed": 33,
+    "piercing": 2,
+    "attack_speed": 2.0
+  },
+  "TEST": {
+    "damage": [20, 35],
+    "speed": 33,
+    "piercing": 2,
+    "attack_speed": 2.0,
+    "hited": null
+  }
+}

@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 
 class Projectile(pygame.sprite.Sprite):
@@ -13,7 +14,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
                                                 weapon.rect.centery))
         self.speed = weapon.stats["projectile_speed"]
-        self.damage = weapon.stats["damage"]
+        self.damage = random.choice(weapon.stats["projectile_damage"])
         self.hits = weapon.stats["piercing"]
         self.hited = []
 

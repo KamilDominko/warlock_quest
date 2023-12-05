@@ -191,5 +191,5 @@ class Spawner:
         return pos
 
     def update(self):
-        # self._update()
-        pass
+        self._update()
+        # pass
