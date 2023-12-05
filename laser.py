@@ -14,7 +14,7 @@ class Laser:
         self.aM = program.audioManager
         self._image = self.tM["lasers"]["laser"][0]
         self.imgH = self._image.get_rect().h
-        self.imgW = self._image.get_rect()
+        self.imgW = self._image.get_rect().w
         self.range = weapon.stats["laser_range"]
         self.image = pygame.transform.rotate(self._image, weapon.angle)
         self.rect = self.image.get_rect(center=(weapon.rect.centerx,
@@ -92,7 +92,7 @@ class Laser:
         rect = self.program.camera.update_rect(self.rect)
         self.program.screen.blit(self.image, rect)
 
-        DEV = 0
+        DEV = 1
         if DEV:
             self._draw_line()
 
@@ -108,8 +108,9 @@ class Laser:
         # Weź pozycję szubka broni gracza + offset + 1/2 długość lasera
         self.x, self.y = self._weapon_tip()
         # Dodaj je do siebie
-        self.rect.centerx = int(self.x)
-        self.rect.centery = int(self.y)
+        # self.rect.centerx = int(self.x)
+        # self.rect.centery = int(self.y)
+        self.rect.center = (int(self.x), int(self.y))
 
     def _drain_mana(self):
         if pygame.time.get_ticks() - self.drainTime > 100:

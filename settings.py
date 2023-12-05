@@ -5,8 +5,8 @@ class Settings:
         self.screen_width = 1920
         self.screen_height = 1080
 
-        self.screen_width = 2560
-        self.screen_height = 1440
+        # self.screen_width = 2560
+        # self.screen_height = 1440
 
         self.title = "Warlock Quest"
         self.fps = 60

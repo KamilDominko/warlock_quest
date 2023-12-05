@@ -74,7 +74,7 @@ class Upgrade:
             if option.rect.collidepoint(pygame.mouse.get_pos()):
                 option.selected = True
                 if self.click:
-                    option.add_bonus(self.player, self.player.weapon)
+                    option.add_bonus(self.player, self.player.weaponImg)
                     self.picked = True
             else:
                 option.selected = False

@@ -21,10 +21,15 @@ class Projectile(pygame.sprite.Sprite):
         self.x, self.y = self._adjusted_x_y(
             self.program.camera.update_mouse()[0],
             self.program.camera.update_mouse()[1], weapon)
+        # print(f"STARY: {self.x, self.y}")
 
         self._rect = pygame.Rect((self.program.camera.update_mouse()), (1, 1))
-        _angle = math.atan2(self._rect.y - weapon.rect.centery,
-                            self._rect.x - weapon.rect.centerx)
+        # _angle = math.atan2(self._rect.y - weapon.rect.centery,
+        #                     self._rect.x - weapon.rect.centerx)
+        _weaponCenter = weapon.rect.center
+        mosX, mosY = self.program.camera.update_mouse()
+        _angle = math.atan2(mosY - weapon.rect.centery,
+                            mosX - weapon.rect.centerx)
         self.dx = math.cos(_angle) * self.speed
         self.dy = math.sin(_angle) * self.speed
 

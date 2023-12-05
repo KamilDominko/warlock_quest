@@ -8,7 +8,7 @@ class Information:
         self.program = program
         self.screen = program.screen
         self.player = program.player
-        self.weapon = program.player.weapon
+        self.weapon = program.player.weaponImg
         self.font = pygame.font.Font("res/font/Pixeltype.ttf", 50)
         self.color = program.settings.BLACK
         self.window = pygame.Surface((350, 700))

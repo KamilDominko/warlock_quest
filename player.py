@@ -3,8 +3,10 @@ import math
 
 import pygame
 
-from weapon import Weapon
+from weapon_image import WeaponImage
 from upgrade import Upgrade
+from default_projectile import DefaultProjectile
+from default_laser import DefaultLaser
 
 
 class Player(pygame.sprite.Sprite):
@@ -43,7 +45,9 @@ class Player(pygame.sprite.Sprite):
         self.regenTime = 0
         self.speed = self.walk
         self.sprintTime = 0
-        self.weapon = Weapon(self, self.program)
+        self.weaponImg = WeaponImage(self, self.program)
+        self.defaultProjectile = DefaultProjectile(self)
+        self.defaultLaser = DefaultLaser(self)
         self.reload = 0
         self.attack = 0
         self.primaryAttack = False
@@ -186,7 +190,6 @@ class Player(pygame.sprite.Sprite):
                 self.primaryAttack = True
             if event.button == 3:
                 self.secondAttack = True
-                self.weapon.laser.animationIndex = 0
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w and self._stateUp:
                 self._stateUp = 0
@@ -204,9 +207,7 @@ class Player(pygame.sprite.Sprite):
                 self.primaryAttack = False
             if event.button == 3:
                 self.secondAttack = False
-                self.weapon.laser.casting = False
-                self.weapon.laser.animationIndex = 0
-                self.aM.stop(2)
+
 
     def _check_sprint(self):
         if self._stateSprint and not self._stateIdle and self.currentStamina > 0:
@@ -281,29 +282,39 @@ class Player(pygame.sprite.Sprite):
         self._move()
         self.feet.midbottom = self.rect.midbottom
         if self.primaryAttack:
-            self.weapon.primary_attack()
+            # self.weaponImg.primary_attack()
+            self.defaultProjectile.use()
         if self.secondAttack:
-            if self.currentMana > self.weapon.laser.cost * 10:
-                self.weapon.secondary_attack()
+            # if self.currentMana > self.weaponImg.laser.cost * 10:
+            #     self.weaponImg.secondary_attack()
+            self.defaultLaser.use()
+        else:
+            self.defaultLaser.casting = False
+            self.aM.stop(2)
+        # UPDATE BRONI
+        self.defaultProjectile.update()
+        self.defaultLaser.update()
+
         self._check_sprint()
         self._regen()
         self._animation_state()
         center = self.program.camera.update_rect(self.rect)
-        self.weapon.update(center.center)
+        self.weaponImg.update(center.center)
         # self._check_circle_range()
+        self._check_if_hited()
         self._check_xp_orb()
 
     def display(self):
         if not self._stateUp:
             self.program.camera.camera_draw(self.image, self.rect.topleft)
-            self.weapon.display()
         elif self._stateLeft or self._stateRight:
             self.program.camera.camera_draw(self.image, self.rect.topleft)
-            self.weapon.display()
         elif self._stateUp:
-            self.weapon.display()
             self.program.camera.camera_draw(self.image, self.rect.topleft)
-        self._check_if_hited()
+        self.weaponImg.display()
+        self.defaultProjectile.display()
+        self.defaultLaser.display()
+
 
         DEV = 0
         if DEV:
