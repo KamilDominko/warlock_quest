@@ -11,8 +11,8 @@ from xp_orb import XpOrb
 from interface import Interface
 from texture_manager import TextureManager
 from audio_manager import AudioManager
-from skeleton import Skeleton
-from zombie import Zombie
+from src.enemies.skeleton import Skeleton
+from src.enemies.zombie import Zombie
 
 pygame.init()
 pygame.mixer.init()

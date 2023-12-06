@@ -1,14 +1,20 @@
 {
   "skeleton": {
     "damage": [1, 5],
-    "health": 60,
-    "speed": 1,
+    "health": 80,
+    "speed": 0.8,
     "attack_speed": 1.0
   },
   "zombie": {
     "damage": [1, 10],
     "health": 120,
-    "speed": 0.8,
+    "speed": 0.6,
+    "attack_speed": 1.0
+  },
+  "ghul": {
+    "damage": [1, 5],
+    "health": 40,
+    "speed": 1.2,
     "attack_speed": 1.0
   },
   "TEST": {

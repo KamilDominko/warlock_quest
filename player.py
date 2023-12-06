@@ -4,8 +4,8 @@ import pygame
 
 from weapon_image import WeaponImage
 from upgrade import Upgrade
-from magic_projectile import MagicProjectile
-from magic_laser import MagicLaser
+from src.weapons.magic_projectile import MagicProjectile
+from src.weapons.magic_laser import MagicLaser
 
 
 class Player(pygame.sprite.Sprite):

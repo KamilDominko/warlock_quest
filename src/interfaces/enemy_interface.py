@@ -11,12 +11,14 @@ class EnemyInterface(pygame.sprite.Sprite):
     HITBOX_WIDTH = 0
     HITBOX_HEIGHT = 0
 
-    def __init__(self, program):
+    def __init__(self, program, x, y):
         super().__init__()
         self.program = program
         self.tM = program.textureManager.textures
         self.aM = program.audioManager
         self.stats = self._load_stats(self.ENEMY_ID)
+        self.x = x
+        self.y = y
         self._stateUp = 0
         self._stateDown = 0
         self._stateLeft = 0
@@ -30,7 +32,7 @@ class EnemyInterface(pygame.sprite.Sprite):
         program.map.obstacles.add(self)
 
     def _json_load(self):
-        f = open('enemiesStatistics.json')
+        f = open('src/data/enemiesStatistics.json')
         return json.load(f)
 
     def _load_stats(self, name):

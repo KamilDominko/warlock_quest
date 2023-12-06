@@ -4,14 +4,14 @@ import pygame
 import math
 
 from xp_orb import XpOrb
-from enemy_interface import EnemyInterface
+from src.interfaces.enemy_interface import EnemyInterface
 
 
 class Skeleton(EnemyInterface):
     ENEMY_ID = "skeleton"
 
     def __init__(self, program, centerx, centery):
-        super().__init__(program)
+        super().__init__(program, centerx, centery)
         self.image = self.tM[self.ENEMY_ID.lower()]["idle"][0]
         self.rect = self.image.get_rect(center=(centerx, centery))
         width = 32
@@ -101,7 +101,11 @@ class Skeleton(EnemyInterface):
         self.feet.x += speed.x
         self.feet.y += speed.y
         # Aktualizuje pozycję self.rect na podstawie self.feet
-        self.rect.midbottom = self.feet.midbottom
+        # self.rect.midbottom = self.feet.midbottom
+        self.x += speed.x
+        self.y += speed.y
+        self.rect.centerx = int(self.x)
+        self.rect.centery = int(self.y)
 
     def _ai(self):
         """Sprawdza gdzie obecnie znajduje się gracz i przemieszcza wroga w

@@ -37,7 +37,7 @@ class WeaponInterface(pygame.sprite.Sprite):
         return x, y
 
     def _json_load(self):
-        f = open('weaponStatistics.json')
+        f = open('src/data/weaponStatistics.json')
         return json.load(f)
 
     def _load_stats(self, name):

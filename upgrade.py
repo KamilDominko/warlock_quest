@@ -26,7 +26,7 @@ class Upgrade:
         self.upgrades = self._json_upgrades_load()
 
     def _json_upgrades_load(self):
-        f = open('upgrades.json')
+        f = open('src/data/upgrades.json')
         return json.load(f)
 
     def _create_options(self):
@@ -88,7 +88,7 @@ class Upgrade:
 
 class Option:
     """Opcja, która daje graczowi ulepszenie."""
-    f = open('upgrades.json')
+    f = open('src/data/upgrades.json')
     upgrades = json.load(f)
     _options = upgrades
 

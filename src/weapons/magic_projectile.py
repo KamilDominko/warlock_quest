@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 
-from weapon_interface import WeaponInterface
+from src.interfaces.weapon_interface import WeaponInterface
 
 
 class MagicProjectile(WeaponInterface):
