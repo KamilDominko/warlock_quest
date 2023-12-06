@@ -11,7 +11,6 @@ class MagicProjectile(WeaponInterface):
     def __init__(self, player):
         super().__init__(player)
         self.group = pygame.sprite.Group()
-        self.stats = self._load_stats(self.WEAPON_ID)
         self.reload = 0
 
         self.image = self.tM["projectiles"]["projectile"]

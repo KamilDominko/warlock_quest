@@ -5,6 +5,7 @@ import json
 
 class WeaponInterface(pygame.sprite.Sprite):
     """Klasa-interfejs do wszystkich broni."""
+    WEAPON_ID = "INTERFACE"
 
     def __init__(self, player):
         super().__init__()
@@ -15,7 +16,7 @@ class WeaponInterface(pygame.sprite.Sprite):
         self.aM = player.program.audioManager
         self.weaponImgOffset = player.weaponImg.height // 2
 
-        self.stats = {}
+        self.stats = self._load_stats(self.WEAPON_ID)
 
     def _set_x_y(self, width=0):
         """Funkcja dodaje do punktu środka broni wektor w stronę myszki

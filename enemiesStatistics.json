@@ -1,0 +1,21 @@
+{
+  "skeleton": {
+    "damage": [1, 5],
+    "health": 60,
+    "speed": 1,
+    "attack_speed": 1.0
+  },
+  "zombie": {
+    "damage": [1, 10],
+    "health": 120,
+    "speed": 0.8,
+    "attack_speed": 1.0
+  },
+  "TEST": {
+    "damage": [20, 35],
+    "speed": 33,
+    "piercing": 2,
+    "attack_speed": 2.0,
+    "hited": null
+  }
+}

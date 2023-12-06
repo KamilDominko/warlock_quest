@@ -11,6 +11,8 @@ from xp_orb import XpOrb
 from interface import Interface
 from texture_manager import TextureManager
 from audio_manager import AudioManager
+from skeleton import Skeleton
+from zombie import Zombie
 
 pygame.init()
 pygame.mixer.init()
@@ -44,7 +46,8 @@ class Game:
         if event.key == pygame.K_KP1:
             x, y = self.camera.give_mouse()
             for i in range(1):
-                enemy = Enemy(self, x, y)
+                # enemy = Enemy(self, x, y)
+                enemy = Skeleton(self, x, y)
                 self.camera.add(enemy)
                 self.enemies.add(enemy)
         # Num2 wywołuje spawner, tworzy wroga w losowym miejscu
@@ -66,6 +69,12 @@ class Game:
         if event.key == pygame.K_KP5:
             for enemy in self.enemies:
                 enemy.die()
+        if event.key == pygame.K_KP6:
+            x, y = self.camera.give_mouse()
+            for i in range(1):
+                enemy = Zombie(self, x, y)
+                self.camera.add(enemy)
+                self.enemies.add(enemy)
         # Num+ zwiększa szybkostrzelność gracza
         if event.key == pygame.K_KP_PLUS:
             self.player.stats["attack_speed"] += 0.5

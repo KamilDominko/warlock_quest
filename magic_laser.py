@@ -11,7 +11,6 @@ class MagicLaser(WeaponInterface):
     def __init__(self, player):
         super().__init__(player)
         self.group = pygame.sprite.Group()
-        self.stats = self._load_stats(self.WEAPON_ID)
         self.casting = False
         self.drainTime = 0
         self.reload = 0

@@ -31,18 +31,21 @@ class TextureManager:
         self._load_projectiles()
         self._load_lasers()
         self._load_enemy()
+        self._load_skeleton()
+        self._load_zombie()
         self._load_map()
         self._load_weapon()
         self._load_xpOrb()
 
-    def _load_animations(self, animations, file_name):
+    def _load_animations(self, path, animations, file_name):
         """Funkcja ładuje obrazy do animacji i dodaje je do głównego słownika
         animacji. Pobiera dwa argumenty: listę nazw animacji oraz nazwę
         pliku, którą dodaje."""
         self.textures[file_name] = {}
         for animation in animations:
-            path = f"res/graphic/{file_name}/{file_name}_{animation}"
-            animationPack = self._load_images(path, file_name, animation)
+            # path = f"res/graphic/{file_name}/{file_name}_{animation}"
+            _path = f"{path}/{file_name}_{animation}"
+            animationPack = self._load_images(_path, file_name, animation)
             self.textures[file_name].update({animation: animationPack})
 
     def _load_images(self, path, img_name, animation, file_extension=".png"):
@@ -101,12 +104,26 @@ class TextureManager:
     def _load_player(self):
         animations = ["idle", "move_up", "move_down", "move_left",
                       "move_right"]
-        self._load_animations(animations, "player")
+        path = "res/graphic/player"
+        self._load_animations(path, animations, "player")
+
+    def _load_skeleton(self):
+        animations = ["idle", "move_up", "move_down", "move_left",
+                      "move_right"]
+        path = "res/graphic/enemies/skeleton"
+        self._load_animations(path, animations, "skeleton")
+
+    def _load_zombie(self):
+        animations = ["idle", "move_up", "move_down", "move_left",
+                      "move_right"]
+        path = "res/graphic/enemies/zombie"
+        self._load_animations(path, animations, "zombie")
 
     def _load_enemy(self):
         animations = ["idle", "move_up", "move_down", "move_left",
                       "move_right"]
-        self._load_animations(animations, "enemy")
+        path = "res/graphic/enemy"
+        self._load_animations(path, animations, "enemy")
 
     def _load_weapon(self):
         self.textures["weapons"] = {}
